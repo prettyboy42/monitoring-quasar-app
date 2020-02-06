@@ -1,53 +1,38 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          @click="leftDrawerOpen = !leftDrawerOpen"
-          icon="menu"
-          aria-label="Menu"
-        />
+    <the-header :headline="headline" />
 
-        <q-toolbar-title>Quasar App</q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="bg-grey-1">
-      <q-list>
-        <q-item-label header class="text-grey-8">Essential Links</q-item-label>
-        <essential-link v-for="link in essentialLinks" :key="link.title" v-bind="link" />
-      </q-list>
-    </q-drawer>
+    <the-side-bar-left :essentialLinks="essentialLinks" />
 
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <the-footer :headline="footerline" />
   </q-layout>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { getModule } from 'vuex-module-decorators';
-import LayoutStoreModule from './LayoutStoreModule';
-import EssentialLink from 'components/EssentialLink.vue';
+import TheHeader from './fragments/TheHeader.vue';
+import TheFooter from './fragments/TheFooter.vue';
+import TheSideBarLeft from './fragments/TheSideBarLeft.vue';
 
 @Component({
   components: {
-    EssentialLink
+    TheHeader,
+    TheFooter,
+    TheSideBarLeft
   }
 })
 export default class MainLayout extends Vue {
-  store = getModule(LayoutStoreModule)
+  public headline = 'Income Tax Calculator';
+  footerline = 'Pacific Ocean, copyright © 2019. All rights reserved.';
   essentialLinks = [
     {
       title: 'ZaloGit',
-      caption: 'zalosocial.team',
+      caption: 'zalo social team',
       icon: 'build',
       link: 'https://zalogit2.zing.vn/zalo-social'
     },
@@ -88,13 +73,5 @@ export default class MainLayout extends Vue {
       link: 'https://facebook.quasar.dev'
     }
   ];
-
-  get leftDrawerOpen() {
-    return this.store.leftDrawerOpen;
-  }
-
-  set leftDrawerOpen(value: boolean) {
-    this.store.setLeftDrawerOpen(value);
-  }
 }
 </script>
