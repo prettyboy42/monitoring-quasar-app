@@ -1,20 +1,20 @@
 import messages from 'src/i18n';
-import Vue from 'vue';
+import Vue, { VueConstructor } from 'vue';
 import VueI18n from 'vue-i18n';
 
-Vue.use(VueI18n);
+declare module 'vue/types/vue' {
+  interface Vue {
+    i18n: VueI18n;
+  }
+}
 
-const i18n = new VueI18n({
-  locale: 'en-us',
-  fallbackLocale: 'en-us',
-  messages
-});
+export default async ({ app, Vue }: { app: Vue; Vue: VueConstructor }) => {
+  Vue.use(VueI18n);
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-export default ({ app }) => {
   // Set i18n instance on app
-  app.i18n = i18n;
+  app.i18n = new VueI18n({
+    locale: 'vi-vn',
+    fallbackLocale: 'en-us',
+    messages
+  });
 };
-
-export { i18n };

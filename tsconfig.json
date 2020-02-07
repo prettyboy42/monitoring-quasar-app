@@ -11,6 +11,7 @@
     "types": ["quasar", "node"]
     // "noEmit": true
   },
+  // "files": ["./src/shims-vue.d.ts"],
   "include": ["./src/**/*"],
   "exclude": ["node_modules"]
 }
