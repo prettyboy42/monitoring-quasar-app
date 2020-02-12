@@ -27,7 +27,7 @@ import TheSideBarLeft from './fragments/TheSideBarLeft.vue';
   }
 })
 export default class MainLayout extends Vue {
-  public headline = 'Income Tax Calculator';
+  public headline = 'Realtime monitoring';
   footerline = 'Pacific Ocean, copyright © 2019. All rights reserved.';
   essentialLinks = [
     {

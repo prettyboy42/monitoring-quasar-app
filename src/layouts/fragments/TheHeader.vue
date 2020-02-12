@@ -7,6 +7,14 @@
 
       <q-toolbar-title>{{ headline }}</q-toolbar-title>
       <q-space />
+      <div class="">
+        <q-btn
+          style="background: #36384c"
+          @click="$q.fullscreen.toggle()"
+          :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
+        />
+      </div>
+      
       <div>Quasar v{{ $q.version }}</div>
       <div class="self-stretch row no-wrap">
         <q-btn-dropdown flat no-caps label="Account" icon="mdi-account">
@@ -44,7 +52,7 @@ import LayoutStoreModule from './../LayoutStoreModule';
 export default class TheHeader extends Vue {
   store = getModule(LayoutStoreModule);
   @Prop({ default: 'No headline' }) readonly headline!: string;
-  
+
   public toggleLeftDrawer(): void {
     this.store.toggleLeftDrawer();
   }
