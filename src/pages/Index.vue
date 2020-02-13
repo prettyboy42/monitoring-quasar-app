@@ -1,9 +1,9 @@
 <template>
-  <q-page class="container">
+  <q-page>
     <div class="row q-col-gutter-md q-px-md q-pt-sm justify-center">
       <div class="col-md-3" v-for="i in 8" :key="i">
         <!-- <apex-line-small :bgColorCard="colors[i - 1]"></apex-line-small> -->
-        <apex-line :bgColorCard="colors[i - 1]"></apex-line>
+        <apex-line :chart-id="i+1" :chart-group="groupSocial" :bgColorCard="colors[i - 1]"></apex-line>
       </div>
     </div>
     <div class="row q-col-gutter-md q-px-md q-py-md">
@@ -52,5 +52,6 @@ export default class PageIndex extends Vue {
     'linear-gradient( 135deg, #FFD3A5 10%, #FD6585 100%)',
     'linear-gradient( 135deg, #EE9AE5 10%, #5961F9 100%)'
   ];
+  public groupSocial: string = 'social';
 }
 </script>

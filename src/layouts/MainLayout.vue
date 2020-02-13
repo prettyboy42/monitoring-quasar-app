@@ -13,8 +13,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
+import { Vue, Component, Watch } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
+import LayoutStoreModule from './LayoutStoreModule';
 import TheHeader from './fragments/TheHeader.vue';
 import TheFooter from './fragments/TheFooter.vue';
 import TheSideBarLeft from './fragments/TheSideBarLeft.vue';
@@ -27,7 +28,9 @@ import TheSideBarLeft from './fragments/TheSideBarLeft.vue';
   }
 })
 export default class MainLayout extends Vue {
-  public headline = 'Realtime monitoring';
+  store = getModule(LayoutStoreModule);
+
+  public headline = 'Realtime System Monitoring';
   footerline = 'Pacific Ocean, copyright © 2019. All rights reserved.';
   essentialLinks = [
     {
@@ -73,5 +76,14 @@ export default class MainLayout extends Vue {
       link: 'https://facebook.quasar.dev'
     }
   ];
+
+  @Watch('$q.fullscreen.isActive')
+  // eslint-disable-next-line
+  onChildChanged(val: boolean, oldVal: boolean) {
+    // console.log(val ? 'In fullscreen now' : 'Exited fullscreen');
+    this.store.setLeftDrawerOpen(!val);
+    this.store.setHeaderState(!val);
+    this.store.setFooterState(!val);
+  }
 }
 </script>
