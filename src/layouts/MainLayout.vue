@@ -1,7 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <the-header :headline="headline" />
-
     <the-side-bar-left :essentialLinks="essentialLinks" />
 
     <q-page-container>

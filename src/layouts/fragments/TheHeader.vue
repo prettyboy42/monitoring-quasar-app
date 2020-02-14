@@ -1,6 +1,6 @@
 <template>
   <q-header elevated v-model="headerState">
-    <q-toolbar row no-wrap items-center>
+    <q-toolbar row no-wrap items-center class="glossy bg-purple">
       <q-btn flat dense round aria-label="Menu" @click="toggleLeftDrawer()">
         <q-icon name="menu" />
       </q-btn>
