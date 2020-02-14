@@ -1,21 +1,30 @@
 <template>
   <q-list bordered>
-    <q-item-label header>Essential Links</q-item-label>
+    <q-item-label header>Category List</q-item-label>
+    <q-item clickable v-ripple>
+      <q-item-section avatar>
+        <q-icon color="primary" name="dashboard" />
+      </q-item-section>
+
+      <q-item-section>Main Dashboard</q-item-section>
+    </q-item>
     <q-expansion-item
       group="somegroup"
-      icon="explore"
+      icon="home_work"
       label="First"
-      caption="5 unread emails"
+      caption="First caption"
       default-opened
       header-class="text-primary"
     >
-      <q-expansion-item
-        :header-inset-level="1"
-        expand-separator
-        icon="receipt"
-        label="Receipts"
-        default-opened
-      >
+      <q-item clickable v-ripple>
+        <!-- <q-item-section avatar>
+          <q-icon color="primary" name="dashboard" />
+        </q-item-section>-->
+
+        <q-item-section avatar></q-item-section>
+        <q-item-section>Dashboard</q-item-section>
+      </q-item>
+      <q-expansion-item :header-inset-level="1" label="Receipts" default-opened>
         <q-expansion-item
           switch-toggle-side
           dense-toggle
@@ -54,8 +63,8 @@
 
     <q-expansion-item
       group="somegroup"
-      icon="perm_identity"
-      label="Second"
+      icon="menu_book"
+      label="Essential Links"
       header-class="text-teal"
     >
       <essential-link v-for="link in essentialLinks" :key="link.title" v-bind="link" />
@@ -82,7 +91,7 @@
 
     <q-expansion-item
       group="somegroup"
-      icon="bluetooth"
+      icon="settings"
       label="Fourth"
       header-class="bg-teal text-white"
       expand-icon-class="text-white"

@@ -30,7 +30,7 @@ import TheSideBarLeft from './fragments/TheSideBarLeft.vue';
 export default class MainLayout extends Vue {
   store = getModule(LayoutStoreModule);
 
-  public headline = 'Realtime System Monitoring';
+  public headline = 'System Realtime Monitoring';
   footerline = 'Pacific Ocean, copyright © 2019. All rights reserved.';
   essentialLinks = [
     {
@@ -80,10 +80,39 @@ export default class MainLayout extends Vue {
   @Watch('$q.fullscreen.isActive')
   // eslint-disable-next-line
   onChildChanged(val: boolean, oldVal: boolean) {
-    // console.log(val ? 'In fullscreen now' : 'Exited fullscreen');
-    this.store.setLeftDrawerOpen(!val);
-    this.store.setHeaderState(!val);
-    this.store.setFooterState(!val);
+    this.toogleFullScreen(!val);
+  }
+
+  created() {
+    this.registerEventFullScreen();
+  }
+
+  destroyed() {
+    this.removeEventFullScreen();
+  }
+
+  public registerEventFullScreen(): void {
+    window.addEventListener('resize', this.handlerFullScreen, false);
+  }
+
+  public removeEventFullScreen(): void {
+    window.removeEventListener('resize', this.handlerFullScreen, false);
+  }
+
+  // eslint-disable-next-line
+  private handlerFullScreen(event: any): void {
+    const maxHeight = window.screen.height,
+      maxWidth = window.screen.width,
+      curHeight = window.innerHeight,
+      curWidth = window.innerWidth;
+
+    const isFullScreen = maxWidth == curWidth && maxHeight == curHeight;
+    this.toogleFullScreen(!isFullScreen);
+  }
+  private toogleFullScreen(val: boolean): void {
+    this.store.setLeftDrawerOpen(val);
+    this.store.setHeaderState(val);
+    this.store.setFooterState(val);
   }
 }
 </script>

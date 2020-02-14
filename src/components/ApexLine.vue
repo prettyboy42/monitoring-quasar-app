@@ -21,6 +21,7 @@ import CardBase from 'components/CardBase.vue';
 })
 export default class ApexLine extends Vue {
   public $refs!: {
+    //A new ! post-fix expression operator may be used to assert that its operand is non-null and non-undefined in contexts
     realtimeChart: HTMLFormElement;
   };
   @Prop() readonly chartId!: string;
