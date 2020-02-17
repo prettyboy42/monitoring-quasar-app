@@ -32,6 +32,14 @@ export default class ApexLine extends Vue {
     {
       name: 'Desktops',
       data: [10, 41, 35, 51, 49, 62, 69, 91, 99]
+    },
+    {
+      name: 'Android',
+      data: [4, 23, 20, 51, 67, 45, 75, 102, 120]
+    },
+    {
+      name: 'IOS',
+      data: [8, 23, 30, 45, 87, 75, 90, 127, 134]
     }
   ];
 
@@ -46,6 +54,10 @@ export default class ApexLine extends Vue {
     setInterval(() => {
       this.series[0].data.splice(0, 1);
       this.series[0].data.push(this.getRandomArbitrary());
+      this.series[1].data.splice(0, 1);
+      this.series[1].data.push(this.getRandomArbitrary());
+      this.series[2].data.splice(0, 1);
+      this.series[2].data.push(this.getRandomArbitrary());
       this.updateSeriesLine();
     }, 5000);
   }
@@ -54,15 +66,21 @@ export default class ApexLine extends Vue {
     // console.log('this.$q.dark.isActive:' + this.$q.dark.isActive); // true, false
     // get configured status
     // console.log('this.$q.dark.mode:' + this.$q.dark.mode); // "auto", true, false
-    // this.$refs.realtimeChart.updateSeries(
-    //   [
-    //     {
-    //       data: this.series[0].data
-    //     }
-    //   ],
-    //   false,
-    //   true
-    // );
+    this.$refs.realtimeChart.updateSeries(
+      [
+        {
+          data: this.series[0].data
+        },
+        {
+          data: this.series[1].data
+        },
+        {
+          data: this.series[2].data
+        }
+      ],
+      false,
+      true
+    );
   }
 
   public buildChartOptions(): any {
@@ -70,7 +88,7 @@ export default class ApexLine extends Vue {
       // colors: ['#FCCF31', '#17ead9', '#f02fc2'],
       theme: {
         mode: 'light',
-        palette: 'palette10' // upto palette10
+        palette: 'palette1' // upto palette10
       },
       chart: {
         id: this.chartId,
@@ -80,19 +98,20 @@ export default class ApexLine extends Vue {
         toolbar: {
           show: true,
           tools: {
-            download: false,
+            download: true,
             selection: false,
-            zoom: false,
-            zoomin: false,
-            zoomout: false,
+            zoom: true,
+            zoomin: true,
+            zoomout: true,
             pan: false,
-            reset: false,
+            reset: true,
             customIcons: [
               {
-                icon: '<button flat round color="red" icon="favorite" />',
-                index: 0,
+                icon:
+                  '<img src="https://img.icons8.com/plasticine/100/000000/download-2.png" width="20">',
+                index: 3,
                 title: 'tooltip of the icon',
-                class: '',
+                class: 'custom-icon',
                 click: function() {
                   console.log('cliked');
                 }
@@ -111,7 +130,8 @@ export default class ApexLine extends Vue {
         }
       },
       stroke: {
-        curve: 'smooth'
+        curve: 'smooth',
+        width: 2
       },
       dropShadow: {
         enabled: true,
@@ -175,7 +195,7 @@ export default class ApexLine extends Vue {
               position: 'bottom'
             },
             theme: {
-              mode: 'dark',
+              mode: 'light',
               palette: 'palette6' // upto palette10
             }
           }

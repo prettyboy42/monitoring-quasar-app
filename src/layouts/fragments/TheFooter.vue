@@ -1,6 +1,6 @@
 <template>
   <q-footer v-model="footerState" elevated>
-    <q-toolbar class="glossy bg-purple">
+    <q-toolbar class="glossy bg-green-9">
       <q-toolbar-title>
         <q-avatar>
           <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg" />

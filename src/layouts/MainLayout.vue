@@ -3,6 +3,8 @@
     <the-header :headline="headline" />
     <the-side-bar-left :essentialLinks="essentialLinks" />
 
+    <the-side-bar-right v-if="$q.platform.is.mobile||false" />
+
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -18,12 +20,14 @@ import LayoutStoreModule from './LayoutStoreModule';
 import TheHeader from './fragments/TheHeader.vue';
 import TheFooter from './fragments/TheFooter.vue';
 import TheSideBarLeft from './fragments/TheSideBarLeft.vue';
+import TheSideBarRight from './fragments/TheSideBarRight.vue';
 
 @Component({
   components: {
     TheHeader,
     TheFooter,
-    TheSideBarLeft
+    TheSideBarLeft,
+    TheSideBarRight
   }
 })
 export default class MainLayout extends Vue {

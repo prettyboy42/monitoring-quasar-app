@@ -67,10 +67,11 @@ module.exports = function(ctx) {
         'QCardActions',
         'QBtnGroup',
         'QExpansionItem',
-        'QSeparator'
+        'QSeparator',
+        'QImg'
       ],
 
-      directives: ['Ripple'],
+      directives: ['Ripple', 'ClosePopup'],
 
       // Quasar plugins
       plugins: ['AppFullscreen'],

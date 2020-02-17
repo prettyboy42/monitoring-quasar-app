@@ -1,5 +1,11 @@
 <template>
-  <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+  <q-drawer
+    v-model="leftDrawerOpen"
+    :show-if-above="false"
+    bordered
+    :width="250"
+    :overlay="$q.platform.is.mobile||false"
+  >
     <t-menu :essentialLinks="essentialLinks"></t-menu>
     <!-- <q-list>
       <q-item-label header class="text-grey-8">Essential Links</q-item-label>
