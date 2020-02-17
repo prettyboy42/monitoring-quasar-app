@@ -113,7 +113,7 @@ export default class ApexLine extends Vue {
                 title: 'tooltip of the icon',
                 class: 'custom-icon',
                 click: function() {
-                  console.log('cliked');
+                  // console.log('cliked');
                 }
               }
             ]

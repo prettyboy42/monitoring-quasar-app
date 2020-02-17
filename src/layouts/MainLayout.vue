@@ -9,7 +9,7 @@
       <router-view />
     </q-page-container>
 
-    <the-footer :headline="footerline" />
+    <the-footer v-if="!($q.platform.is.mobile||false)" :headline="footerline" />
   </q-layout>
 </template>
 
