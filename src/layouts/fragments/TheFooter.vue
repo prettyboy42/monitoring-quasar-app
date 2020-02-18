@@ -20,14 +20,13 @@ import LayoutStoreModule from './../LayoutStoreModule';
 export default class TheFooter extends Vue {
   store = getModule(LayoutStoreModule);
   @Prop({ default: 'No footer headline' }) readonly headline!: string;
-  public footerState: boolean = this.$q.platform.is.desktop || false;
 
-  // get footerState() {
-  //   return this.store.footerState;
-  // }
+  get footerState() {
+    return this.store.footerState;
+  }
 
-  // set footerState(value: boolean) {
-  //   this.store.setFooterState(value);
-  // }
+  set footerState(value: boolean) {
+    this.store.setFooterState(value);
+  }
 }
 </script>
