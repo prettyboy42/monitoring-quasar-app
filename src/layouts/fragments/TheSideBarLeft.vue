@@ -1,16 +1,19 @@
 <template>
   <q-drawer
+    show-if-above
     v-model="leftDrawerOpen"
-    :show-if-above="false"
+    side="left"
+    :width="300"
+    :breakpoint="700"
     bordered
-    :width="250"
-    :overlay="$q.platform.is.mobile||false"
   >
-    <t-menu :essentialLinks="essentialLinks"></t-menu>
-    <!-- <q-list>
+    <q-scroll-area class="fit">
+      <t-menu :essentialLinks="essentialLinks"></t-menu>
+      <!-- <q-list>
       <q-item-label header class="text-grey-8">Essential Links</q-item-label>
       <essential-link v-for="link in essentialLinks" :key="link.title" v-bind="link" />
-    </q-list>-->
+      </q-list>-->
+    </q-scroll-area>
   </q-drawer>
 </template>
 

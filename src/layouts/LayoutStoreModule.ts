@@ -9,10 +9,10 @@ import Store from '../store/index';
   store: Store
 })
 export default class LayoutStoreModule extends VuexModule {
-  public leftDrawerOpen = Platform.is.desktop || false;
+  public leftDrawerOpen = false;
   public rightDrawerOpen = false;
   public headerState: boolean = true;
-  public footerState: boolean = true;
+  public footerState: boolean = Platform.is.desktop || false;
 
   @Mutation
   public SET_LEFT_DRAWER_OPEN(value: boolean) {

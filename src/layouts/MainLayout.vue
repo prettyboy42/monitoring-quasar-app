@@ -1,15 +1,15 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lff">
     <the-header :headline="headline" />
     <the-side-bar-left :essentialLinks="essentialLinks" />
 
-    <the-side-bar-right v-if="$q.platform.is.mobile||false" />
+    <the-side-bar-right v-show="$q.platform.is.mobile||false" />
 
     <q-page-container>
       <router-view />
     </q-page-container>
 
-    <the-footer v-if="!($q.platform.is.mobile||false)" :headline="footerline" />
+    <the-footer :headline="footerline" />
   </q-layout>
 </template>
 
@@ -87,11 +87,15 @@ export default class MainLayout extends Vue {
   }
 
   created() {
-    this.registerEventFullScreen();
+    if (this.$q.platform.is.desktop === true) {
+      this.registerEventFullScreen();
+    }
   }
 
   destroyed() {
-    this.removeEventFullScreen();
+    if (this.$q.platform.is.desktop === true) {
+      this.removeEventFullScreen();
+    }
   }
 
   public registerEventFullScreen(): void {
@@ -112,6 +116,7 @@ export default class MainLayout extends Vue {
     const isFullScreen = maxWidth == curWidth && maxHeight == curHeight;
     this.toogleFullScreen(!isFullScreen);
   }
+
   private toogleFullScreen(val: boolean): void {
     this.store.setLeftDrawerOpen(val);
     this.store.setHeaderState(val);

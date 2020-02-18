@@ -1,5 +1,7 @@
 # Quasar App (quasar-typescript-app)
 
+Demo: https://monitoring-quasar-app.now.sh
+
 ## Installation
 
 1.  Clone this repository.
@@ -19,7 +21,19 @@ yarn run lint
 quasar build
 ```
 
-### Now config
+### Deploy to Now
+
+#### Login now
+
+```bash
+now
+```
+
+#### deploy to now
+
+```bash
+now --prod
+```
 
 ❗️ The now.json file should be inside of the provided root directory.
 No framework detected. Default project settings:

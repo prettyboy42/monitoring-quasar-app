@@ -68,7 +68,9 @@ module.exports = function(ctx) {
         'QBtnGroup',
         'QExpansionItem',
         'QSeparator',
-        'QImg'
+        'QImg',
+        'QScrollArea',
+        'QPageScroller'
       ],
 
       directives: ['Ripple', 'ClosePopup'],

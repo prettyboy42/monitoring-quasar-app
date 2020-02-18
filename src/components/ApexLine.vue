@@ -62,10 +62,6 @@ export default class ApexLine extends Vue {
     }, 5000);
   }
   public updateSeriesLine(): void {
-    // get status
-    // console.log('this.$q.dark.isActive:' + this.$q.dark.isActive); // true, false
-    // get configured status
-    // console.log('this.$q.dark.mode:' + this.$q.dark.mode); // "auto", true, false
     this.$refs.realtimeChart.updateSeries(
       [
         {
