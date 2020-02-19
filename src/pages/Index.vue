@@ -1,6 +1,8 @@
 <template>
   <q-page :class="$q.platform.is.desktop===true?'q-pa-md':'q-pa-xs'">
-    <div :class="$q.platform.is.desktop===true?'row q-col-gutter-sm justify-center':'column q-col-gutter-xs justify-center'">
+    <div
+      :class="$q.platform.is.desktop===true?'row q-col-gutter-sm justify-center':'column q-col-gutter-xs justify-center'"
+    >
       <div class="col-xs-12 col-sm-6 col-md-3" v-for="i in 8" :key="i">
         <apex-line :chart-id="i+1" :chart-group="groupSocial" :bgColorCard="colors[i - 1]"></apex-line>
       </div>
@@ -42,7 +44,6 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import ApexLine from 'components/ApexLine.vue';
-// import { Platform } from 'quasar';
 
 @Component({
   components: {

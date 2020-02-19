@@ -20,8 +20,8 @@
         <q-btn
           flat
           @click="$q.dark.toggle()"
-          :icon="$q.dark.isActive ? 'toggle_on' : 'toggle_off'"
-          :label="$q.dark.isActive ? 'Light' : 'Dark'"
+          :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"
+          :label="$q.dark.isActive ? 'Dark' : 'Light'"
         />
       </q-btn-group>
       <q-separator dark vertical />
@@ -57,8 +57,8 @@
       <q-btn
         flat
         @click="$q.dark.toggle()"
-        :icon="$q.dark.isActive ? 'toggle_on' : 'toggle_off'"
-        :label="$q.dark.isActive ? 'Light' : 'Dark'"
+        :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"
+        :label="$q.dark.isActive ? 'Dark' : 'Light'"
       />
       <q-btn flat dense round aria-label="Menu" @click="toggleRightDrawer()">
         <q-icon name="settings" />

@@ -14,12 +14,12 @@
       </q-item-section>
     </q-item>
     <q-separator />
-    <q-item clickable v-ripple>
+    <q-item clickable v-ripple to="/">
       <q-item-section avatar>
         <q-icon color="primary" name="dashboard" />
       </q-item-section>
 
-      <q-item-section>Main Dashboard</q-item-section>
+      <q-item-section>Realtime Dashboard</q-item-section>
     </q-item>
     <q-expansion-item
       group="somegroup"
@@ -29,7 +29,7 @@
       default-opened
       header-class="text-primary"
     >
-      <q-item clickable v-ripple>
+      <q-item clickable v-ripple to="dashboard">
         <!-- <q-item-section avatar>
           <q-icon color="primary" name="dashboard" />
         </q-item-section>-->

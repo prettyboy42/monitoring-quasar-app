@@ -26,6 +26,7 @@ export default class ApexLine extends Vue {
   };
   @Prop() readonly chartId!: string;
   @Prop() readonly chartGroup!: string;
+  public updateSeriesInterval!: NodeJS.Timeout;
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   public series: any = [
@@ -47,11 +48,15 @@ export default class ApexLine extends Vue {
     this.setDataLineChart();
   }
 
+  beforeDestroy() {
+    clearInterval(this.updateSeriesInterval);
+  }
+
   public getRandomArbitrary(): number {
     return Math.floor(Math.random() * 99);
   }
   setDataLineChart(): void {
-    setInterval(() => {
+    this.updateSeriesInterval = setInterval(() => {
       this.series[0].data.splice(0, 1);
       this.series[0].data.push(this.getRandomArbitrary());
       this.series[1].data.splice(0, 1);
