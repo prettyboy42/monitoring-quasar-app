@@ -1,6 +1,6 @@
 <template>
   <q-card class="my-card" :style="{backgroundImage: bgColor}">
-    <q-card-section>
+    <q-card-section style="padding: 5px;">
       <slot></slot>
     </q-card-section>
   </q-card>
