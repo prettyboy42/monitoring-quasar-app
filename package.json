@@ -15,10 +15,10 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.0.0",
+    "@quasar/extras": "^1.5.2",
     "apexcharts": "^3.15.5",
     "axios": "^0.18.1",
-    "quasar": "^1.9.2",
+    "quasar": "^1.9.4",
     "vue-apexcharts": "^1.5.2",
     "vue-class-component": "^7.2.2",
     "vue-grid-layout": "^2.3.7",
@@ -26,7 +26,7 @@
     "vue-property-decorator": "^8.4.0"
   },
   "devDependencies": {
-    "@quasar/app": "^1.5.7",
+    "@quasar/app": "^1.5.8",
     "@quasar/quasar-app-extension-typescript": "^1.0.0-beta.2",
     "@types/node": "11.9.5",
     "@typescript-eslint/eslint-plugin": "^1.12.0",
