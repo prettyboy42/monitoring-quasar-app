@@ -27,6 +27,8 @@
       <q-separator dark vertical />
       <q-btn-dropdown flat stretch no-caps label="Account" icon="mdi-account">
         <q-list>
+          <t-avatar-box></t-avatar-box>
+          <q-separator />
           <q-item v-if="!authenticated" to="/login" clickable v-close-popup>
             <q-item-section>
               <q-item-label>Login</q-item-label>
@@ -72,7 +74,11 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
 import LayoutStoreModule from './../LayoutStoreModule';
 
-@Component
+@Component({
+  components: {
+    TAvatarBox: () => import('../../components/TAvatarBox.vue')
+  }
+})
 export default class TheHeader extends Vue {
   store = getModule(LayoutStoreModule);
   @Prop({ default: 'No headline' }) readonly headline!: string;

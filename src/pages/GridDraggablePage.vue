@@ -40,7 +40,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import VueGridLayout from 'vue-grid-layout';
+import VueGridLayout from 'vue-grid-layout'; //https://github.com/jbaysolutions/vue-grid-layout
 import { GridItemData } from 'vue-grid-layout';
 
 var testLayout: GridItemData[] = [

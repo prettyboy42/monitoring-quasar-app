@@ -11,7 +11,7 @@
     "dev": "quasar dev",
     "build": "quasar build",
     "deploy": "now --prod",
-    "lint": "eslint --ext .js,.ts,.vue --ignore-path .gitignore ./src/",
+    "lint": "eslint --ext .js,.ts,.vue --ignore-path .gitignore ./src",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {

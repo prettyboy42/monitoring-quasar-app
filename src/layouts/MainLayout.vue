@@ -9,7 +9,7 @@
       <router-view />
     </q-page-container>
 
-    <the-footer :headline="footerline" />
+    <!-- <the-footer :headline="footerline" /> -->
   </q-layout>
 </template>
 

@@ -70,16 +70,26 @@ module.exports = function(ctx) {
         'QSeparator',
         'QImg',
         'QScrollArea',
-        'QPageScroller'
+        'QPageScroller',
+        'QSelect',
+        'QOptionGroup',
+        'QToggle',
+        'QBtnToggle'
       ],
 
       directives: ['Ripple', 'ClosePopup'],
 
       // Quasar plugins
-      plugins: ['AppFullscreen'],
+      plugins: ['AppFullscreen', 'Notify'],
 
       config: {
-        dark: 'auto'
+        dark: 'auto',
+        notify: {
+          position: 'top-right',
+          timeout: 2500,
+          textColor: 'white',
+          actions: [{ icon: 'close', color: 'white' }]
+        }
       }
     },
 
