@@ -33,7 +33,7 @@ import TheSideBarRight from './fragments/TheSideBarRight.vue';
 export default class MainLayout extends Vue {
   store = getModule(LayoutStoreModule);
 
-  public headline = 'System Realtime Monitoring';
+  public headline = 'System Monitoring';
   footerline = 'Pacific Ocean, copyright © 2019. All rights reserved.';
   essentialLinks = [
     {

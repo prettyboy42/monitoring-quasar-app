@@ -4,8 +4,8 @@
       ref="realtimeChart"
       type="line"
       height="250"
-      :options="buildChartOptions()"
-      :series="series"
+      :options="chartOptions"
+      :series="chartSeries"
     />
   </card-base>
 </template>
@@ -13,6 +13,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import CardBase from 'components/CardBase.vue';
+import { ChartSeries } from './models';
 
 @Component({
   components: {
@@ -24,10 +25,131 @@ export default class ApexLine extends Vue {
     //A new ! post-fix expression operator may be used to assert that its operand is non-null and non-undefined in contexts
     realtimeChart: HTMLFormElement;
   };
-  @Prop() readonly chartId!: string;
-  @Prop() readonly chartGroup!: string;
+  @Prop() chartId!: string;
+  @Prop() chartGroup!: string;
+  @Prop() chartTitle!: string;
+  @Prop() chartSeries!: ChartSeries;
   public updateSeriesInterval!: NodeJS.Timeout;
 
+  public chartOptions: any = {
+    // colors: ['#FCCF31', '#17ead9', '#f02fc2'],
+    theme: {
+      mode: 'light',
+      palette: 'palette1' // upto palette10
+    },
+    title: {
+      text: this.chartTitle,
+      align: 'left',
+      style: {
+        color: '#131413'
+      }
+    },
+    chart: {
+      id: this.chartId,
+      group: this.chartGroup,
+      height: 350,
+      type: 'line',
+      toolbar: {
+        show: true,
+        tools: {
+          download: true,
+          selection: false,
+          zoom: true,
+          zoomin: true,
+          zoomout: true,
+          pan: false,
+          reset: true,
+          customIcons: [
+            {
+              icon:
+                '<img src="https://img.icons8.com/plasticine/100/000000/download-2.png" width="20">',
+              index: 3,
+              title: 'tooltip of the icon',
+              class: 'custom-icon',
+              click: function() {
+                // console.log('cliked');
+              }
+            }
+          ]
+        }
+      }
+    },
+    grid: {
+      show: true,
+      strokeDashArray: 0,
+      xaxis: {
+        lines: {
+          show: true
+        }
+      }
+    },
+    stroke: {
+      curve: 'smooth',
+      width: 2
+    },
+    dropShadow: {
+      enabled: true,
+      opacity: 0.3,
+      blur: 5,
+      left: -7,
+      top: 22
+    },
+    dataLabels: {
+      enabled: false
+    },
+    xaxis: {
+      type: 'datetime',
+      // categories: [
+      //   'Jan',
+      //   'Feb',
+      //   'Mar',
+      //   'Apr',
+      //   'May',
+      //   'Jun',
+      //   'Jul',
+      //   'Aug',
+      //   'Sep'
+      // ],
+      labels: {
+        style: {
+          colors: '#a35822'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        minWidth: 40,
+        style: {
+          color: '#FCCF31'
+        }
+      }
+    },
+    // legend: {
+    //   show: false,
+    //   showForSingleSeries: false,
+    //   position: 'right',
+    //   verticalAlign: 'top',
+    //   containerMargin: {
+    //     left: 35,
+    //     right: 60
+    //   }
+    // },
+    responsive: [
+      {
+        breakpoint: 1000,
+        options: {
+          legend: {
+            showForSingleSeries: true,
+            position: 'bottom'
+          },
+          theme: {
+            mode: 'light',
+            palette: 'palette6' // upto palette10
+          }
+        }
+      }
+    ]
+  };
   /* eslint-disable @typescript-eslint/no-explicit-any */
   public series: any = [
     {
@@ -45,11 +167,11 @@ export default class ApexLine extends Vue {
   ];
 
   mounted() {
-    this.setDataLineChart();
+    // this.setDataLineChart();
   }
 
   beforeDestroy() {
-    clearInterval(this.updateSeriesInterval);
+    // clearInterval(this.updateSeriesInterval);
   }
 
   public getRandomArbitrary(): number {
@@ -82,128 +204,6 @@ export default class ApexLine extends Vue {
       false,
       true
     );
-  }
-
-  public buildChartOptions(): any {
-    let chartOptions: any = {
-      // colors: ['#FCCF31', '#17ead9', '#f02fc2'],
-      theme: {
-        mode: 'light',
-        palette: 'palette1' // upto palette10
-      },
-      chart: {
-        id: this.chartId,
-        group: this.chartGroup,
-        height: 350,
-        type: 'line',
-        toolbar: {
-          show: true,
-          tools: {
-            download: true,
-            selection: false,
-            zoom: true,
-            zoomin: true,
-            zoomout: true,
-            pan: false,
-            reset: true,
-            customIcons: [
-              {
-                icon:
-                  '<img src="https://img.icons8.com/plasticine/100/000000/download-2.png" width="20">',
-                index: 3,
-                title: 'tooltip of the icon',
-                class: 'custom-icon',
-                click: function() {
-                  // console.log('cliked');
-                }
-              }
-            ]
-          }
-        }
-      },
-      grid: {
-        show: true,
-        strokeDashArray: 0,
-        xaxis: {
-          lines: {
-            show: true
-          }
-        }
-      },
-      stroke: {
-        curve: 'smooth',
-        width: 2
-      },
-      dropShadow: {
-        enabled: true,
-        opacity: 0.3,
-        blur: 5,
-        left: -7,
-        top: 22
-      },
-      dataLabels: {
-        enabled: false
-      },
-      title: {
-        text: 'Line',
-        align: 'left',
-        style: {
-          color: '#131413'
-        }
-      },
-      xaxis: {
-        categories: [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep'
-        ],
-        labels: {
-          style: {
-            colors: '#a35822'
-          }
-        }
-      },
-      yaxis: {
-        labels: {
-          minWidth: 40,
-          style: {
-            color: '#FCCF31'
-          }
-        }
-      },
-      // legend: {
-      //   show: false,
-      //   showForSingleSeries: false,
-      //   position: 'right',
-      //   verticalAlign: 'top',
-      //   containerMargin: {
-      //     left: 35,
-      //     right: 60
-      //   }
-      // },
-      responsive: [
-        {
-          breakpoint: 1000,
-          options: {
-            legend: {
-              showForSingleSeries: true,
-              position: 'bottom'
-            },
-            theme: {
-              mode: 'light',
-              palette: 'palette6' // upto palette10
-            }
-          }
-        }
-      ]
-    };
-    return chartOptions;
   }
 }
 </script>

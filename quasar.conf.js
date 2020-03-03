@@ -105,6 +105,16 @@ module.exports = function(ctx) {
       analyze: false,
       distDir: ctx.mode.spa ? 'public' : null,
 
+      env: ctx.dev
+        ? {
+            // so on dev we'll have
+            VUE_APP_ROOT_API: JSON.stringify('https://monitor.zaloapp.com/api')
+          }
+        : {
+            // and on build (production):
+            VUE_APP_ROOT_API: JSON.stringify('https://monitor.zaloapp.com/api')
+          },
+
       // Options below are automatically set depending on the env, set them if you want to override
       // preloadChunks: false,
       // extractCSS: false,
@@ -117,6 +127,7 @@ module.exports = function(ctx) {
           loader: 'eslint-loader',
           exclude: /node_modules/,
           options: {
+            cache: true,
             formatter: require('eslint').CLIEngine.getFormatter('stylish')
           }
         });

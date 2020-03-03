@@ -2,18 +2,22 @@
   "compilerOptions": {
     "allowJs": true,
     "sourceMap": true,
-    "target": "esnext",
+    "target": "es6",
+    "lib": ["es6", "esnext", "dom", "dom.iterable", "scripthost"],
     "strict": true,
     "experimentalDecorators": true,
     "module": "esnext",
     "moduleResolution": "node",
     "baseUrl": ".",
+    "paths": {
+      "~/*": ["./*"],
+      "@/*": ["src/*"]
+    },
     "types": ["quasar", "node"],
     "allowSyntheticDefaultImports": true //Enable this flag in order to use ApexCharts
     // "noImplicitAny": false
     // "noEmit": true
   },
-  // "files": ["./src/shims-vue.d.ts"],
-  "include": ["./src/**/*"],
-  "exclude": ["node_modules", "public"]
+  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.vue"],
+  "exclude": ["node_modules", "public", "dist", ".quasar"]
 }
