@@ -24,22 +24,14 @@
 
         <div class="col" style="max-width: 310px;">
           <div class="row q-gutter-md justify-end">
-            <q-toggle
-              v-model="smonStore.showLegend"
-              @input="handleChangedShowLegendFn"
-              color="green"
-              label="Legend"
-            />
+            <q-toggle v-model="smonStore.showLegend" color="green" label="Legend" />
             <q-btn-toggle
               v-model="smonStore.legendType"
               no-caps
               toggle-color="green"
               size="md"
               @input="handleChangedLegendTypeFn"
-              :options="[
-          {label: 'By day', value: 'by-day'},
-          {label: 'By time', value: 'time-range'}
-        ]"
+              :options="legendTypeOptions"
             />
           </div>
         </div>
@@ -50,7 +42,9 @@
 
 <script lang="ts">
 import { Component, Inject, Vue } from 'vue-property-decorator';
-import SmonObservable from '../pages/dashboard-smon-observable';
+import SmonObservable, {
+  LEGEND_TYPE
+} from '../pages/dashboard-smon-observable';
 import { isNullOrEmpty } from './models';
 
 @Component({
@@ -67,13 +61,14 @@ import { isNullOrEmpty } from './models';
 })
 export default class TServiceFilter extends Vue {
   @Inject('storeObservable') readonly smonStore!: SmonObservable;
+  public legendTypeOptions: object[] = [
+    LEGEND_TYPE.TIME_RANGE,
+    LEGEND_TYPE.BY_DAY
+  ].map(it =>
+    Object.assign({}, { label: it.toString(), value: it.toString() })
+  );
 
   public handleChangedLegendTypeFn(val: string) {
-    if (isNullOrEmpty(val)) return;
-    this.smonStore.toogleChartRender(true);
-  }
-
-  public handleChangedShowLegendFn(val: string) {
     if (isNullOrEmpty(val)) return;
     this.smonStore.toogleChartRender(true);
   }

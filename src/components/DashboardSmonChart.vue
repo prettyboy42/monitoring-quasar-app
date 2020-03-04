@@ -3,7 +3,8 @@
     <apexchart
       ref="realtimeChart"
       type="line"
-      height="250"
+      :width="chartWidth"
+      :height="chartHeight"
       :options="chartOptions"
       :series="chartSeries"
     />
@@ -12,7 +13,11 @@
 
 <script lang="ts">
 import { Vue, Component, Inject, Prop, Watch } from 'vue-property-decorator';
-import SmonObservable from '../pages/dashboard-smon-observable';
+import SmonObservable, {
+  LEGEND_TYPE
+} from '../pages/dashboard-smon-observable';
+import { getModule } from 'vuex-module-decorators';
+import LayoutStoreModule from '../layouts/LayoutStoreModule';
 import ProfilerService from '../boot/services/monitor-profiler.service';
 import { ChartSeries, isNullOrEmpty } from './models';
 import { date } from 'quasar';
@@ -28,10 +33,14 @@ export default class DashboardSmonChart extends Vue {
     realtimeChart: HTMLFormElement;
   };
   @Inject('storeObservable') readonly smonStore!: SmonObservable;
+  private store = getModule(LayoutStoreModule);
+
   private readonly apiCaller = new ProfilerService();
   @Prop({ default: '0' }) chartId!: number | string;
   @Prop({ default: 'defaultGroup' }) chartGroup!: string;
   @Prop({ default: '0.0.0.0' }) serverIp!: string;
+  @Prop({ default: '100%' }) chartWidth!: number;
+  @Prop({ default: '300' }) chartHeight!: number; //auto
 
   public chartSeries: ChartSeries[] = [];
   public readonly colors: string[] = [
@@ -40,6 +49,7 @@ export default class DashboardSmonChart extends Vue {
     'linear-gradient( 135deg, #FFD3A5 10%, #FD6585 100%)',
     'linear-gradient( 135deg, #EE9AE5 10%, #5961F9 100%)'
   ];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public chartOptions: any = {
     // colors: ['#FCCF31', '#17ead9', '#f02fc2'],
     theme: {
@@ -59,7 +69,7 @@ export default class DashboardSmonChart extends Vue {
     chart: {
       id: this.formatChartId,
       group: this.chartGroup,
-      height: 350,
+      // height: this.chartHeight,
       type: 'line',
       toolbar: {
         show: true,
@@ -122,20 +132,18 @@ export default class DashboardSmonChart extends Vue {
       labels: {
         minWidth: 40,
         style: {
-          color: '#FCCF31'
+          // colors: '#FCCF31'
         }
       }
     },
-    // legend: {
-    //   show: false,
-    //   showForSingleSeries: false,
-    //   position: 'right',
-    //   verticalAlign: 'top',
-    //   containerMargin: {
-    //     left: 35,
-    //     right: 60
-    //   }
-    // },
+    legend: {
+      show: true,
+      showForSingleSeries: this.smonStore.metricValue?.length > 1 || false,
+      position:
+        this.smonStore.legendType == LEGEND_TYPE.BY_DAY ? 'right' : 'bottom',
+      inverseOrder: this.smonStore.legendType == LEGEND_TYPE.BY_DAY,
+      offsetY: 5
+    },
     responsive: [
       {
         breakpoint: 1000,
@@ -152,7 +160,6 @@ export default class DashboardSmonChart extends Vue {
       }
     ]
   };
-  // public hasCreated: boolean = false;
 
   public get formatChartId(): string {
     return `realtimeChart_${this.chartId}`;
@@ -277,6 +284,13 @@ export default class DashboardSmonChart extends Vue {
     };
   }
 
+  created() {
+    if (this.chartSeries.length == 0) {
+      //Do fetch if chartSeries is empty
+      this.fecthChartSeries();
+    }
+  }
+
   @Watch('serverIp')
   onChangedServerIp(newVal: string) {
     if (isNullOrEmpty(newVal)) return;
@@ -294,10 +308,40 @@ export default class DashboardSmonChart extends Vue {
     );
   }
 
+  @Watch('smonStore.showLegend')
+  public handleToogleOnOffLegend(showLegend: boolean) {
+    console.log(`handleToogleOnOffLegend is ${showLegend}`);
+    this.chartOptions = Object.assign({}, this.chartOptions, {
+      legend: {
+        show: showLegend
+      }
+    });
+  }
+
+  @Watch('smonStore.legendType')
+  public handleToogleLegendType(newVal: LEGEND_TYPE) {
+    this.chartOptions = Object.assign({}, this.chartOptions, {
+      legend: {
+        position: newVal == LEGEND_TYPE.BY_DAY ? 'right' : 'bottom',
+        inverseOrder: this.smonStore.legendType == LEGEND_TYPE.BY_DAY
+      }
+    });
+  }
+
   @Watch('smonStore.requireRenderChart')
   onChangedrequireRenderChart(val: boolean) {
     if (val) {
       this.fecthChartSeries();
+    }
+  }
+
+  @Watch('store.forceRefresh')
+  onChangedForceRefresh(val: boolean) {
+    if (val) {
+      //Do fetch series when user triggered refresh action
+      this.fecthChartSeries().then(() => {
+        this.store.setForceRefresh(false);
+      });
     }
   }
 
@@ -307,7 +351,7 @@ export default class DashboardSmonChart extends Vue {
     const from = diff.getTime();
     const dayRange = [0, 7].join(',');
     const timeInterval = [1, 2, 3, 5, 10][0];
-    const chartType = this.smonStore.legendType; //time-range
+    const chartType = this.smonStore.legendType;
     try {
       const chartRes = await this.apiCaller.getChartData(
         this.smonStore.appName,
@@ -324,7 +368,6 @@ export default class DashboardSmonChart extends Vue {
       this.chartSeries = chartRes.data.data.result?.listSeries || [];
       this.smonStore.toogleChartRender(false);
     } catch (error) {
-      console.log(`fecthChartSeries FAILED. error:${JSON.stringify(error)}`);
       this.$q.notify({
         color: 'negative',
         position: 'top',

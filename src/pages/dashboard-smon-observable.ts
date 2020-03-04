@@ -64,7 +64,10 @@ export const CONST_METRICS_BY_TYPE = [
   }
 ];
 
-export const CHART_TYPE = ['time-range', 'by-day'];
+export enum LEGEND_TYPE {
+  TIME_RANGE = 'time-range',
+  BY_DAY = 'by-day'
+}
 
 interface FilterOption {
   appName: string;
@@ -72,7 +75,7 @@ interface FilterOption {
   metricValue: string[];
   threadApiName: string;
   showLegend: boolean;
-  legendType: string;
+  legendType: LEGEND_TYPE;
   metricGroupType: string;
   appNameList: string[];
   metricTypeList: string[];
@@ -97,7 +100,7 @@ export default class SmonObservable {
     metricValue: [],
     threadApiName: '',
     showLegend: true,
-    legendType: 'time-range',
+    legendType: LEGEND_TYPE.TIME_RANGE,
     metricGroupType: 'checkbox',
     appNameList: [],
     metricTypeList: [],
@@ -168,11 +171,11 @@ export default class SmonObservable {
     this.stateObs.showLegend = newVal;
   }
 
-  public get legendType(): string {
+  public get legendType(): LEGEND_TYPE {
     return this.stateObs.legendType;
   }
 
-  public set legendType(newVal: string) {
+  public set legendType(newVal: LEGEND_TYPE) {
     if (newVal === null || newVal === undefined) {
       throw new Error('legendType must not null or empty');
     }

@@ -6,13 +6,9 @@
       </div>
     </div>
     <div
-      :class="$q.platform.is.desktop===true?'row q-col-gutter-sm justify-center':'column q-col-gutter-xs justify-center'"
+      :class="$q.platform.is.desktop===true?'row q-col-gutter-sm justify-start':'column q-col-gutter-xs justify-center'"
     >
-      <div
-        class="col-xs-12 col-sm-6 col-md-3"
-        v-for="(serverIp,index) in storeObs.serverIpList"
-        :key="index"
-      >
+      <div :class="chartGridClass" v-for="(serverIp,index) in storeObs.serverIpList" :key="index">
         <dashboard-smon-chart :chart-id="index+1" :chart-group="chartGroup" :server-ip="serverIp" />
         <!-- <apex-line
           :chart-id="i+1"
@@ -70,8 +66,22 @@ export default class PageIndex extends Vue {
   ];
   public chartGroup: string = 'serviceMon';
 
-  created() {
-    this.initData();
+  async created() {
+    await this.initData();
+  }
+
+  public get chartGridClass(): string {
+    let gridClass: string[] = ['col-xs-12', 'col-sm-6'];
+    if (this.storeObs.serverIpList.length == 0) return gridClass.join(' ');
+
+    if (this.storeObs.serverIpList.length <= 2) {
+      gridClass.push('col-md');
+    } else if (this.storeObs.serverIpList.length <= 4) {
+      gridClass.push('col-md-6');
+    } else {
+      gridClass.push('col-md-4');
+    }
+    return gridClass.join(' ');
   }
 
   private async initData() {

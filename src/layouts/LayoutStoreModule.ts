@@ -13,6 +13,7 @@ export default class LayoutStoreModule extends VuexModule {
   public rightDrawerOpen = false;
   public headerState: boolean = true;
   public footerState: boolean = Platform.is.desktop || false;
+  public forceRefresh: boolean = false;
 
   @Mutation
   public SET_LEFT_DRAWER_OPEN(value: boolean) {
@@ -62,5 +63,15 @@ export default class LayoutStoreModule extends VuexModule {
   @Action
   public setFooterState(value: boolean) {
     this.SET_FOOTER_STATE(value);
+  }
+
+  @Mutation
+  public SET_FORCE_REFRESH(val: boolean) {
+    this.forceRefresh = val;
+  }
+
+  @Action
+  public setForceRefresh(val: boolean) {
+    this.SET_FORCE_REFRESH(val);
   }
 }

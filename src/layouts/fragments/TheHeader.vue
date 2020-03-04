@@ -8,7 +8,45 @@
       <q-toolbar-title>{{ headline }}</q-toolbar-title>
       <q-space />
 
-      <div class="q-pa-sm">Quasar v{{ $q.version }}</div>
+      <!-- <div class="q-pa-sm">Quasar v{{ $q.version }}</div> -->
+      <q-btn
+        icon="refresh"
+        label="Refresh"
+        flat
+        stretch
+        color="bg-green-9"
+        @click="onClickRefreshFn"
+      />
+      <q-btn-dropdown flat stretch color="bg-green-9" :icon="refreshIcon" :label="refreshLabel">
+        <q-list>
+          <q-item
+            :key="index+1"
+            v-for="(itemLabel, index) in refreshMenuList"
+            clickable
+            v-close-popup
+            @click="onItemClick"
+          >
+            <q-item-section>
+              <q-item-label>{{ itemLabel }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
+      <q-btn-dropdown flat stretch color="bg-green-9" icon="access_time" :label="timeRangeLabel">
+        <q-list>
+          <q-item
+            :key="index+1"
+            v-for="(itemLabel, index) in timeRangeMenuList"
+            clickable
+            v-close-popup
+            @click="onTimeRangeClickFn"
+          >
+            <q-item-section>
+              <q-item-label>{{ itemLabel }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
       <q-separator dark vertical />
       <q-btn-group flat stretch>
         <q-btn
@@ -82,6 +120,33 @@ import LayoutStoreModule from './../LayoutStoreModule';
 export default class TheHeader extends Vue {
   store = getModule(LayoutStoreModule);
   @Prop({ default: 'No headline' }) readonly headline!: string;
+  private readonly defaultRefreshLabel: string = 'Auto refresh';
+  private readonly defaultRefreshIcon: string = 'autorenew';
+  public readonly refreshMenuList: string[] = [
+    'Off',
+    '5 seconds',
+    '10 seconds',
+    '15 seconds',
+    '30 seconds',
+    '1 minute',
+    '5 minutes'
+  ];
+  public readonly timeRangeMenuList: string[] = [
+    'Whole today',
+    'Today to now',
+    'Last 15 minutes',
+    'Last 30 minutes',
+    'Last an hour',
+    'Last 2 hours',
+    'Last 4 hours',
+    'Last 8 hours',
+    'Last 12 hours',
+    'Last 24 hours',
+    'Last 7 days'
+  ];
+  public refreshLabel: string = this.defaultRefreshLabel;
+  public refreshIcon: string = this.defaultRefreshIcon;
+  public timeRangeLabel: string = this.timeRangeMenuList[0];
 
   get headerState() {
     return this.store.headerState;
@@ -105,6 +170,27 @@ export default class TheHeader extends Vue {
 
   public isMobilePlatform(): boolean {
     return this.$q.platform.is.mobile || false;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public onItemClick(e: any) {
+    this.refreshLabel =
+      e.target.innerText === this.refreshMenuList[0]
+        ? this.defaultRefreshLabel
+        : e.target.innerText;
+    this.refreshIcon =
+      e.target.innerText === this.refreshMenuList[0]
+        ? this.defaultRefreshIcon
+        : 'pause';
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public onTimeRangeClickFn(e: any) {
+    this.timeRangeLabel = e?.target?.innerText || this.timeRangeMenuList[0];
+  }
+
+  public onClickRefreshFn() {
+    this.store.setForceRefresh(true);
   }
 }
 </script>
