@@ -28,7 +28,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Provide } from 'vue-property-decorator';
+import { Vue, Component, Provide, Watch } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
+import LayoutStoreModule from '../layouts/LayoutStoreModule';
 import SmonObservable from './dashboard-smon-observable';
 import ProfilerService from '../boot/services/monitor-profiler.service';
 
@@ -40,8 +42,11 @@ import ProfilerService from '../boot/services/monitor-profiler.service';
   }
 })
 export default class PageIndex extends Vue {
-  @Provide('storeObservable') storeObs = new SmonObservable();
+  private readonly store = getModule(LayoutStoreModule);
+  @Provide('storeObservable')
+  private readonly storeObs = new SmonObservable();
   private readonly apiCaller = new ProfilerService();
+  private refreshChartInterval!: NodeJS.Timeout;
 
   public colors: string[] = [
     'linear-gradient( 135deg, #ABDCFF 10%, #0396FF 100%)',
@@ -69,6 +74,9 @@ export default class PageIndex extends Vue {
   async created() {
     await this.initData();
   }
+  beforeDestroy() {
+    clearInterval(this.refreshChartInterval);
+  }
 
   public get chartGridClass(): string {
     let gridClass: string[] = ['col-xs-12', 'col-sm-6'];
@@ -89,6 +97,24 @@ export default class PageIndex extends Vue {
     if (res) {
       //Trigger render chart
       this.storeObs.toogleChartRender(true);
+    }
+  }
+
+  private registerRefreshChartInterval(val: number) {
+    if (val > 0) {
+      this.refreshChartInterval = setInterval(() => {
+        //Trigger render chart
+        this.storeObs.toogleChartRender(true);
+      }, val);
+    }
+  }
+
+  @Watch('store.refreshTimeInterval')
+  private onChangedRefreshTimeInterval(newVal: number) {
+    if (newVal == 0) {
+      clearInterval(this.refreshChartInterval);
+    } else {
+      this.registerRefreshChartInterval(newVal);
     }
   }
 }

@@ -82,6 +82,7 @@ interface FilterOption {
   serverIpList: string[];
   threadApiList: string[];
   metricValueList: TMetricItem[];
+  syncChart: boolean;
 }
 
 interface TMetricByTypeItem {
@@ -106,7 +107,8 @@ export default class SmonObservable {
     metricTypeList: [],
     serverIpList: [],
     threadApiList: [],
-    metricValueList: []
+    metricValueList: [],
+    syncChart: true
   });
   public isFetchingData = false;
   public requireRenderChart = false;
@@ -230,6 +232,17 @@ export default class SmonObservable {
   }
   public set metricValueList(newList: TMetricItem[]) {
     this.stateObs.metricValueList = newList;
+  }
+
+  public get syncChart(): boolean {
+    return this.stateObs.syncChart;
+  }
+
+  public set syncChart(newVal: boolean) {
+    if (newVal === null || newVal === undefined) {
+      throw new Error('syncChart must not null or empty');
+    }
+    this.stateObs.syncChart = newVal;
   }
 
   public filterAppListByName(val: string): string[] {

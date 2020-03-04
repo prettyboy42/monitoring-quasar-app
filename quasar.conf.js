@@ -74,7 +74,8 @@ module.exports = function(ctx) {
         'QSelect',
         'QOptionGroup',
         'QToggle',
-        'QBtnToggle'
+        'QBtnToggle',
+        'QTooltip'
       ],
 
       directives: ['Ripple', 'ClosePopup'],

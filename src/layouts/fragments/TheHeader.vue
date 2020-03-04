@@ -9,25 +9,35 @@
       <q-space />
 
       <!-- <div class="q-pa-sm">Quasar v{{ $q.version }}</div> -->
-      <q-btn
-        icon="refresh"
-        label="Refresh"
-        flat
-        stretch
-        color="bg-green-9"
-        @click="onClickRefreshFn"
-      />
+      <q-btn icon="refresh" flat stretch color="bg-green-9" @click="onClickRefreshFn">
+        <q-tooltip>Refresh</q-tooltip>
+      </q-btn>
       <q-btn-dropdown flat stretch color="bg-green-9" :icon="refreshIcon" :label="refreshLabel">
         <q-list>
           <q-item
             :key="index+1"
-            v-for="(itemLabel, index) in refreshMenuList"
+            v-for="(item, index) in refreshMenuList"
             clickable
             v-close-popup
-            @click="onItemClick"
+            @click="onAutoRefreshClickFn"
           >
             <q-item-section>
-              <q-item-label>{{ itemLabel }}</q-item-label>
+              <q-item-label>{{ item.label }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
+      <q-btn-dropdown flat stretch color="bg-green-9" icon="flash_on" :label="tickTimeLabel">
+        <q-list>
+          <q-item
+            :key="index+1"
+            v-for="(item, index) in tickTimeMenuList"
+            clickable
+            v-close-popup
+            @click="onTickTimeClickFn"
+          >
+            <q-item-section>
+              <q-item-label>{{ item.label }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -36,13 +46,13 @@
         <q-list>
           <q-item
             :key="index+1"
-            v-for="(itemLabel, index) in timeRangeMenuList"
+            v-for="(item, index) in timeRangeMenuList"
             clickable
             v-close-popup
             @click="onTimeRangeClickFn"
           >
             <q-item-section>
-              <q-item-label>{{ itemLabel }}</q-item-label>
+              <q-item-label>{{ item.label }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -53,7 +63,7 @@
           flat
           @click="$q.fullscreen.toggle()"
           :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
-          :label="$q.fullscreen.isActive ? 'Exit Fullscreen' : 'Go Fullscreen'"
+          :label="$q.fullscreen.isActive ? 'Exit Fullscreen' : 'Fullscreen'"
         />
         <q-btn
           flat
@@ -110,7 +120,12 @@
 <script lang='ts'>
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
-import LayoutStoreModule from './../LayoutStoreModule';
+import LayoutStoreModule, {
+  AUTO_REFRESH_INTERVAL,
+  TICK_TIME_INTERVAL,
+  TIME_RANGE_INTERVAL,
+  TIME_RANGE_ENUM
+} from './../LayoutStoreModule';
 
 @Component({
   components: {
@@ -122,31 +137,15 @@ export default class TheHeader extends Vue {
   @Prop({ default: 'No headline' }) readonly headline!: string;
   private readonly defaultRefreshLabel: string = 'Auto refresh';
   private readonly defaultRefreshIcon: string = 'autorenew';
-  public readonly refreshMenuList: string[] = [
-    'Off',
-    '5 seconds',
-    '10 seconds',
-    '15 seconds',
-    '30 seconds',
-    '1 minute',
-    '5 minutes'
-  ];
-  public readonly timeRangeMenuList: string[] = [
-    'Whole today',
-    'Today to now',
-    'Last 15 minutes',
-    'Last 30 minutes',
-    'Last an hour',
-    'Last 2 hours',
-    'Last 4 hours',
-    'Last 8 hours',
-    'Last 12 hours',
-    'Last 24 hours',
-    'Last 7 days'
-  ];
+  public readonly refreshMenuList = AUTO_REFRESH_INTERVAL;
+  public readonly tickTimeMenuList = TICK_TIME_INTERVAL;
+  public readonly timeRangeMenuList = TIME_RANGE_INTERVAL;
   public refreshLabel: string = this.defaultRefreshLabel;
   public refreshIcon: string = this.defaultRefreshIcon;
-  public timeRangeLabel: string = this.timeRangeMenuList[0];
+  public timeRangeLabel: string = this.timeRangeMenuList[0].label;
+  public tickTimeLabel: string = this.formatDisplayTickTime(
+    TICK_TIME_INTERVAL[0].label
+  );
 
   get headerState() {
     return this.store.headerState;
@@ -173,24 +172,46 @@ export default class TheHeader extends Vue {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public onItemClick(e: any) {
-    this.refreshLabel =
-      e.target.innerText === this.refreshMenuList[0]
-        ? this.defaultRefreshLabel
-        : e.target.innerText;
-    this.refreshIcon =
-      e.target.innerText === this.refreshMenuList[0]
-        ? this.defaultRefreshIcon
-        : 'pause';
+  public onAutoRefreshClickFn(e: any) {
+    const found = AUTO_REFRESH_INTERVAL.find(
+      it => it.label == e.target.innerText
+    );
+    if (found) {
+      //Trigger auto-refresh mode
+      this.store.setRefreshTimeInterval(found.value);
+      //Update label
+      this.refreshLabel =
+        found.value == 0 ? this.defaultRefreshLabel : found.label;
+      this.refreshIcon = found.value == 0 ? this.defaultRefreshIcon : 'pause';
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public onTimeRangeClickFn(e: any) {
-    this.timeRangeLabel = e?.target?.innerText || this.timeRangeMenuList[0];
+    const found = TIME_RANGE_INTERVAL.find(
+      it => it.label == e.target.innerText
+    );
+    if (found) {
+      this.timeRangeLabel = found.label;
+      this.store.setTimeRangeInterval(found.value);
+    }
   }
 
   public onClickRefreshFn() {
     this.store.setForceRefresh(true);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public onTickTimeClickFn(e: any) {
+    const found = TICK_TIME_INTERVAL.find(it => it.label == e.target.innerText);
+    if (found) {
+      this.tickTimeLabel = this.formatDisplayTickTime(found.label);
+      this.store.setTickTimeInterval(found.value);
+    }
+  }
+
+  private formatDisplayTickTime(val: string) {
+    return `Interval: ${val}`;
   }
 }
 </script>
