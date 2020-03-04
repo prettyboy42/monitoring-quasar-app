@@ -10,7 +10,7 @@
 
       <!-- <div class="q-pa-sm">Quasar v{{ $q.version }}</div> -->
       <q-btn icon="refresh" flat stretch color="bg-green-9" @click="onClickRefreshFn">
-        <q-tooltip>Refresh</q-tooltip>
+        <q-tooltip>Refresh now</q-tooltip>
       </q-btn>
       <q-btn-dropdown flat stretch color="bg-green-9" :icon="refreshIcon" :label="refreshLabel">
         <q-list>
@@ -123,8 +123,7 @@ import { getModule } from 'vuex-module-decorators';
 import LayoutStoreModule, {
   AUTO_REFRESH_INTERVAL,
   TICK_TIME_INTERVAL,
-  TIME_RANGE_INTERVAL,
-  TIME_RANGE_ENUM
+  TIME_RANGE_INTERVAL
 } from './../LayoutStoreModule';
 
 @Component({
