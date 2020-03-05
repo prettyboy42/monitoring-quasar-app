@@ -25,7 +25,9 @@
         <div class="col" style="max-width: 390px;">
           <div class="row q-gutter-md justify-end">
             <q-toggle class="col" v-model="smonStore.syncChart" color="green" label="Sync" />
-            <q-toggle v-model="smonStore.showLegend" color="green" label="Legend" />
+            <q-toggle v-model="smonStore.showLegend" color="green" label="Legend">
+              <q-tooltip>Show ON or OFF legend</q-tooltip>
+            </q-toggle>
             <q-btn-toggle
               v-model="smonStore.legendType"
               no-caps

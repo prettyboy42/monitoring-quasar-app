@@ -1,8 +1,17 @@
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-var-requires */
 // Configuration for your app
 // https://quasar.dev/quasar-cli/quasar-conf-js
 
-module.exports = function(ctx) {
+const { configure } = require('quasar/wrappers');
+
+module.exports = configure(function(ctx) {
   return {
+    supportTS: {
+      tsCheckerConfig: {
+        eslint: true
+      }
+    },
     // Quasar looks for *.js files by default
     sourceFiles: {
       router: 'src/router/index.ts',
@@ -122,16 +131,18 @@ module.exports = function(ctx) {
 
       // https://quasar.dev/quasar-cli/cli-documentation/handling-webpack
       extendWebpack(cfg) {
-        cfg.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /node_modules/,
-          options: {
-            cache: true,
-            formatter: require('eslint').CLIEngine.getFormatter('stylish')
-          }
-        });
+        if (process.env.NODE_ENV === 'production') {
+          // linting is slow in TS projects, we execute it only for production builds
+          cfg.module.rules.push({
+            enforce: 'pre',
+            test: /\.(js|vue)$/,
+            loader: 'eslint-loader',
+            exclude: /node_modules/,
+            options: {
+              formatter: require('eslint').CLIEngine.getFormatter('stylish')
+            }
+          });
+        }
       }
     },
 
@@ -157,11 +168,14 @@ module.exports = function(ctx) {
       workboxOptions: {}, // only for GenerateSW
       manifest: {
         name: 'Quasar App',
+        // eslint-disable-next-line @typescript-eslint/camelcase
         short_name: 'Quasar App',
         description: 'A Quasar Framework app',
         display: 'standalone',
         orientation: 'portrait',
+        // eslint-disable-next-line @typescript-eslint/camelcase
         background_color: '#ffffff',
+        // eslint-disable-next-line @typescript-eslint/camelcase
         theme_color: '#027be3',
         icons: [
           {
@@ -234,4 +248,4 @@ module.exports = function(ctx) {
       }
     }
   };
-};
+});

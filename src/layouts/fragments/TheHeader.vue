@@ -190,6 +190,7 @@ export default class TheHeader extends Vue {
     const found = TIME_RANGE_INTERVAL.find(
       it => it.label == e.target.innerText
     );
+
     if (found) {
       this.timeRangeLabel = found.label;
       this.store.setTimeRangeInterval(found.value);

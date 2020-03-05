@@ -31,6 +31,7 @@ export default class ApexLine extends Vue {
   @Prop() chartSeries!: ChartSeries;
   public updateSeriesInterval!: NodeJS.Timeout;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public chartOptions: any = {
     // colors: ['#FCCF31', '#17ead9', '#f02fc2'],
     theme: {

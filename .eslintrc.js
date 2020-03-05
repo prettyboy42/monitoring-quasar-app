@@ -38,9 +38,15 @@ module.exports = {
   // See https://eslint.vuejs.org/user-guide/#how-to-use-custom-parser
   // `parser: 'vue-eslint-parser'` is already included with any 'plugin:vue/**' config and should be omitted
   parserOptions: {
+    // Needed to make the parser take into account 'vue' files
+    // See https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/parser#configuration
+    // See https://github.com/TypeStrong/fork-ts-checker-webpack-plugin#eslint
+    extraFileExtensions: ['.vue'],
     parser: '@typescript-eslint/parser',
-    sourceType: 'module',
-    project: './tsconfig.json'
+    project: resolve(__dirname, './tsconfig.json'),
+    tsconfigRootDir: __dirname,
+    ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
+    sourceType: 'module' // Allows for the use of imports
   },
 
   env: {
@@ -51,7 +57,9 @@ module.exports = {
     ga: true, // Google Analytics
     cordova: true,
     __statics: true,
-    process: true
+    process: true,
+    Capacitor: true,
+    chrome: true
   },
 
   // add your custom rules here
@@ -73,4 +81,4 @@ module.exports = {
     // See https://github.com/typescript-eslint/typescript-eslint/issues/493
     '@typescript-eslint/explicit-function-return-type': 'off'
   }
-}
+};
