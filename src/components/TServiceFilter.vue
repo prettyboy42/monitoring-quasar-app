@@ -45,9 +45,7 @@
 
 <script lang="ts">
 import { Component, Inject, Vue } from 'vue-property-decorator';
-import SmonObservable, {
-  LEGEND_TYPE
-} from '../pages/dashboard-smon-observable';
+import SmonObservable, { LEGEND_TYPE } from '../store/observable-smon';
 import { isNullOrEmpty } from './models';
 
 @Component({

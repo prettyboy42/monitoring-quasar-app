@@ -16,7 +16,7 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
-import LayoutStoreModule from './LayoutStoreModule';
+import LayoutModule from '../store/layouts/layout-module';
 import TheHeader from './fragments/TheHeader.vue';
 import TheFooter from './fragments/TheFooter.vue';
 import TheSideBarLeft from './fragments/TheSideBarLeft.vue';
@@ -31,7 +31,7 @@ import TheSideBarRight from './fragments/TheSideBarRight.vue';
   }
 })
 export default class MainLayout extends Vue {
-  store = getModule(LayoutStoreModule);
+  store = getModule(LayoutModule, this.$store);
 
   public headline = 'System Monitoring';
   footerline = 'Pacific Ocean, copyright © 2019. All rights reserved.';

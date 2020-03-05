@@ -14,11 +14,11 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
-import LayoutStoreModule from './../LayoutStoreModule';
+import LayoutModule from '../../store/layouts/layout-module';
 
 @Component
 export default class TheFooter extends Vue {
-  store = getModule(LayoutStoreModule);
+  store = getModule(LayoutModule, this.$store);
   @Prop({ default: 'No footer headline' }) readonly headline!: string;
 
   get footerState() {

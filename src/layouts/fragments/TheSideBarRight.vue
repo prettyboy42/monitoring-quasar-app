@@ -34,11 +34,11 @@
 <script lang='ts'>
 import { Vue, Component } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
-import LayoutStoreModule from './../LayoutStoreModule';
+import LayoutModule from '../../store/layouts/layout-module';
 
 @Component
 export default class TheSideBarRight extends Vue {
-  store = getModule(LayoutStoreModule);
+  store = getModule(LayoutModule, this.$store);
 
   get rightDrawerOpen() {
     return this.store.rightDrawerOpen;

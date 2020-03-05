@@ -15,7 +15,7 @@
       <q-btn-dropdown flat stretch color="bg-green-9" :icon="refreshIcon" :label="refreshLabel">
         <q-list>
           <q-item
-            :key="index+1"
+            :key="index"
             v-for="(item, index) in refreshMenuList"
             clickable
             v-close-popup
@@ -30,7 +30,7 @@
       <q-btn-dropdown flat stretch color="bg-green-9" icon="flash_on" :label="tickTimeLabel">
         <q-list>
           <q-item
-            :key="index+1"
+            :key="index"
             v-for="(item, index) in tickTimeMenuList"
             clickable
             v-close-popup
@@ -45,7 +45,7 @@
       <q-btn-dropdown flat stretch color="bg-green-9" icon="access_time" :label="timeRangeLabel">
         <q-list>
           <q-item
-            :key="index+1"
+            :key="index"
             v-for="(item, index) in timeRangeMenuList"
             clickable
             v-close-popup
@@ -120,11 +120,11 @@
 <script lang='ts'>
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
-import LayoutStoreModule, {
+import LayoutModule, {
   AUTO_REFRESH_INTERVAL,
   TICK_TIME_INTERVAL,
   TIME_RANGE_INTERVAL
-} from './../LayoutStoreModule';
+} from '../../store/layouts/layout-module';
 
 @Component({
   components: {
@@ -132,7 +132,7 @@ import LayoutStoreModule, {
   }
 })
 export default class TheHeader extends Vue {
-  store = getModule(LayoutStoreModule);
+  store = getModule(LayoutModule, this.$store);
   @Prop({ default: 'No headline' }) readonly headline!: string;
   private readonly defaultRefreshLabel: string = 'Auto refresh';
   private readonly defaultRefreshIcon: string = 'autorenew';

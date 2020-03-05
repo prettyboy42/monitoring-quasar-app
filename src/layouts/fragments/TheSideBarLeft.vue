@@ -20,7 +20,7 @@
 <script lang='ts'>
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
-import LayoutStoreModule from './../LayoutStoreModule';
+import LayoutModule from '../../store/layouts/layout-module';
 import EssentialLink from '../../components/EssentialLink.vue';
 import TMenu from '../../components/TMenu.vue';
 
@@ -31,7 +31,7 @@ import TMenu from '../../components/TMenu.vue';
   }
 })
 export default class TheSideBarLeft extends Vue {
-  store = getModule(LayoutStoreModule);
+  store = getModule(LayoutModule, this.$store);
   @Prop({ default: [] }) readonly essentialLinks!: object;
 
   get leftDrawerOpen() {

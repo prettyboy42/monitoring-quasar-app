@@ -1,6 +1,5 @@
 import { Platform } from 'quasar';
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators';
-import Store from '../store/index';
 
 export const AUTO_REFRESH_INTERVAL = [
   { label: 'Off', value: 0 },
@@ -46,12 +45,13 @@ export const TIME_RANGE_INTERVAL = [
   { label: 'Last 7 days', value: TIME_RANGE_ENUM.LAST_7_DAYS }
 ];
 @Module({
-  dynamic: true,
-  name: 'layout',
+  name: LayoutModule.MODULE_NAME,
   namespaced: true,
-  store: Store
+  stateFactory: true,
+  preserveState: true
 })
-export default class LayoutStoreModule extends VuexModule {
+export default class LayoutModule extends VuexModule {
+  public static readonly MODULE_NAME = 'layout';
   public leftDrawerOpen = false;
   public rightDrawerOpen = false;
   public headerState: boolean = true;

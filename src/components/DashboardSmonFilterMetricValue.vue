@@ -13,9 +13,7 @@
 
 <script lang="ts">
 import { Watch, Component, Inject, Vue } from 'vue-property-decorator';
-import SmonObservable, {
-  LEGEND_TYPE
-} from '../pages/dashboard-smon-observable';
+import SmonObservable, { LEGEND_TYPE } from '../store/observable-smon';
 
 @Component
 export default class DashboardSmonFilterMetricValue extends Vue {

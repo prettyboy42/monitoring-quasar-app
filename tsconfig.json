@@ -2,9 +2,10 @@
   "extends": "@quasar/app/tsconfig-preset",
   "compilerOptions": {
     "lib": ["es6", "esnext", "dom", "dom.iterable", "scripthost"],
+    //https://github.com/championswimmer/vuex-module-decorators
     "experimentalDecorators": true,
+    "importHelpers": true, //For reduced code with decorators, set importHelpers: true in tsconfig.json
     "baseUrl": ".",
-    // "types": ["quasar", "node"],
     "allowSyntheticDefaultImports": true //Enable this flag in order to use ApexCharts
   },
   "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.vue"],

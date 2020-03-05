@@ -29,9 +29,9 @@
 
 <script lang="ts">
 import { Vue, Component, Provide, Watch } from 'vue-property-decorator';
-import { getModule } from 'vuex-module-decorators';
-import LayoutStoreModule from '../layouts/LayoutStoreModule';
-import SmonObservable from './dashboard-smon-observable';
+// import { getModule } from 'vuex-module-decorators';
+// import LayoutModule from '../store/layouts/layout-module';
+import SmonObservable from '../store/observable-smon';
 import ProfilerService from '../boot/services/monitor-profiler.service';
 
 @Component({
@@ -42,7 +42,7 @@ import ProfilerService from '../boot/services/monitor-profiler.service';
   }
 })
 export default class PageIndex extends Vue {
-  private readonly store = getModule(LayoutStoreModule);
+  // private readonly store = getModule(LayoutModule, this.$store);
   @Provide('storeObservable')
   private readonly storeObs = new SmonObservable();
   private readonly apiCaller = new ProfilerService();
@@ -74,6 +74,7 @@ export default class PageIndex extends Vue {
   async created() {
     await this.initData();
   }
+
   beforeDestroy() {
     clearInterval(this.refreshChartInterval);
   }
@@ -109,7 +110,7 @@ export default class PageIndex extends Vue {
     }
   }
 
-  @Watch('store.refreshTimeInterval')
+  @Watch('$store.state.layout.refreshTimeInterval')
   private onChangedRefreshTimeInterval(newVal: number) {
     if (newVal == 0) {
       clearInterval(this.refreshChartInterval);

@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Component, Inject, Vue } from 'vue-property-decorator';
-import SmonObservable from '../pages/dashboard-smon-observable';
+import SmonObservable from '../store/observable-smon';
 import { isNullOrEmpty } from './models';
 
 @Component

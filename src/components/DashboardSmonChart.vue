@@ -13,13 +13,9 @@
 
 <script lang="ts">
 import { Vue, Component, Inject, Prop, Watch } from 'vue-property-decorator';
-import SmonObservable, {
-  LEGEND_TYPE
-} from '../pages/dashboard-smon-observable';
+import SmonObservable, { LEGEND_TYPE } from '../store/observable-smon';
 import { getModule } from 'vuex-module-decorators';
-import LayoutStoreModule, {
-  TIME_RANGE_ENUM
-} from '../layouts/LayoutStoreModule';
+import LayoutModule, { TIME_RANGE_ENUM } from '../store/layouts/layout-module';
 import ProfilerService from '../boot/services/monitor-profiler.service';
 import { ChartSeries, isNullOrEmpty } from './models';
 import { date } from 'quasar';
@@ -35,7 +31,7 @@ export default class DashboardSmonChart extends Vue {
     realtimeChart: HTMLFormElement;
   };
   @Inject('storeObservable') readonly smonStore!: SmonObservable;
-  private store = getModule(LayoutStoreModule);
+  private store = getModule(LayoutModule, this.$store);
 
   private readonly apiCaller = new ProfilerService();
   @Prop({ default: '0' }) chartId!: number | string;
@@ -105,7 +101,13 @@ export default class DashboardSmonChart extends Vue {
             }
           ]
         }
+      },
+      animations: {
+        enabled: false
       }
+    },
+    markers: {
+      size: 0
     },
     grid: {
       show: true,
@@ -205,7 +207,7 @@ export default class DashboardSmonChart extends Vue {
   }
 
   @Watch('smonStore.showLegend')
-  public handleToogleOnOffLegend(showLegend: boolean) {
+  public async handleToogleOnOffLegend(showLegend: boolean) {
     this.chartOptions = Object.assign({}, this.chartOptions, {
       legend: {
         show: showLegend
@@ -217,7 +219,7 @@ export default class DashboardSmonChart extends Vue {
   public handleToogleOnOffSyncChart(syncChart: boolean) {
     this.chartOptions = Object.assign({}, this.chartOptions, {
       chart: {
-        group: syncChart?this.chartGroup:this.chartId
+        group: syncChart ? this.chartGroup : this.chartId
       }
     });
   }
