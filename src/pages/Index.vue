@@ -1,22 +1,20 @@
 <template>
   <q-page :class="$q.platform.is.desktop===true?'q-pa-md':'q-pa-xs'">
-    <div v-show="$q.platform.is.desktop === true" class="row q-pb-md">
+    <!-- <div v-show="$q.platform.is.desktop === true" class="row q-pb-md">
       <div class="col-12">
         <t-service-filter />
       </div>
-    </div>
+    </div>-->
     <div
       :class="$q.platform.is.desktop===true?'row q-col-gutter-sm justify-start':'column q-col-gutter-xs justify-center'"
     >
-      <div :class="chartGridClass" v-for="(serverIp,index) in storeObs.serverIpList" :key="index">
-        <dashboard-smon-chart :chart-id="index+1" :chart-group="chartGroup" :server-ip="serverIp" />
-        <!-- <apex-line
-          :chart-id="i+1"
+      <div :class="chartGridClass" v-for="(serverIp,index) in serverIpList" :key="index">
+        <apex-line
+          :chart-id="index+1"
           :chart-group="chartGroup"
           :chart-title="serverIp"
-          :chart-series="series"
-          :bgColorCard="colors[i - 1]"
-        />-->
+          :bgColorCard="colors[index - 1]"
+        />
       </div>
     </div>
     <div class="row q-col-gutter-md q-px-md q-py-md"></div>
@@ -28,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Provide, Watch } from 'vue-property-decorator';
+import { Vue, Component, Inject, Watch } from 'vue-property-decorator';
 // import { getModule } from 'vuex-module-decorators';
 // import LayoutModule from '../store/layouts/layout-module';
 import SmonObservable from '../store/observable-smon';
@@ -36,87 +34,41 @@ import ProfilerService from '../boot/services/monitor-profiler.service';
 
 @Component({
   components: {
-    // ApexLine: () => import('components/ApexLine.vue'),
-    TServiceFilter: () => import('components/TServiceFilter.vue'),
-    DashboardSmonChart: () => import('../components/DashboardSmonChart.vue')
+    ApexLine: () => import('components/ApexLine.vue')
   }
 })
 export default class PageIndex extends Vue {
-  // private readonly store = getModule(LayoutModule, this.$store);
-  @Provide('storeObservable')
-  private readonly storeObs = new SmonObservable();
-  private readonly apiCaller = new ProfilerService();
-  private refreshChartInterval!: NodeJS.Timeout;
-
+  public serverIpList: string[] = [
+    '10.30.22.17',
+    '10.30.22.18',
+    '10.30.22.19',
+    '10.30.58.190',
+    '10.30.58.191',
+    '10.30.58.192',
+    '10.30.65.42',
+    '10.30.65.43',
+    '10.30.65.44'
+  ];
   public colors: string[] = [
     'linear-gradient( 135deg, #ABDCFF 10%, #0396FF 100%)',
     'linear-gradient( 135deg, #2AFADF 10%, #4C83FF 100%)',
     'linear-gradient( 135deg, #FFD3A5 10%, #FD6585 100%)',
     'linear-gradient( 135deg, #EE9AE5 10%, #5961F9 100%)'
   ];
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  public series: any = [
-    {
-      name: 'Desktops',
-      data: [10, 41, 35, 51, 49, 62, 69, 91, 99]
-    },
-    {
-      name: 'Android',
-      data: [4, 23, 20, 51, 67, 45, 75, 102, 120]
-    },
-    {
-      name: 'IOS',
-      data: [8, 23, 30, 45, 87, 75, 90, 127, 134]
-    }
-  ];
-  public chartGroup: string = 'serviceMon';
-
-  async created() {
-    await this.initData();
-  }
-
-  beforeDestroy() {
-    clearInterval(this.refreshChartInterval);
-  }
+  public chartGroup: string = 'realtimeGroup';
 
   public get chartGridClass(): string {
     let gridClass: string[] = ['col-xs-12', 'col-sm-6'];
-    if (this.storeObs.serverIpList.length == 0) return gridClass.join(' ');
+    if (this.serverIpList.length == 0) return gridClass.join(' ');
 
-    if (this.storeObs.serverIpList.length <= 2) {
+    if (this.serverIpList.length <= 2) {
       gridClass.push('col-md');
-    } else if (this.storeObs.serverIpList.length <= 4) {
+    } else if (this.serverIpList.length <= 4) {
       gridClass.push('col-md-6');
     } else {
       gridClass.push('col-md-4');
     }
     return gridClass.join(' ');
-  }
-
-  private async initData() {
-    const res = await this.storeObs.fetchDataForFirst();
-    if (res) {
-      //Trigger render chart
-      this.storeObs.toogleChartRender(true);
-    }
-  }
-
-  private registerRefreshChartInterval(val: number) {
-    if (val > 0) {
-      this.refreshChartInterval = setInterval(() => {
-        //Trigger render chart
-        this.storeObs.toogleChartRender(true);
-      }, val);
-    }
-  }
-
-  @Watch('$store.state.layout.refreshTimeInterval')
-  private onChangedRefreshTimeInterval(newVal: number) {
-    if (newVal == 0) {
-      clearInterval(this.refreshChartInterval);
-    } else {
-      this.registerRefreshChartInterval(newVal);
-    }
   }
 }
 </script>

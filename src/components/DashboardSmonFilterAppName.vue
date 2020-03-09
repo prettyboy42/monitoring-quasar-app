@@ -6,7 +6,7 @@
     fill-input
     input-debounce="0"
     color="orange"
-    v-model="smonStore.appName"
+    v-model="appName"
     :options="appNameOptions"
     @filter="filterFnAutoselect"
     @filter-abort="abortFilterFn"
@@ -18,16 +18,27 @@
 
 <script lang="ts">
 import { Component, Inject, Vue } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
+import SmonModule from '../store/smon/smon-module';
+
 import SmonObservable from '../store/observable-smon';
 import { isNullOrEmpty } from './models';
 
 @Component
 export default class DashboardSmonFilterAppName extends Vue {
-  @Inject('storeObservable') readonly smonStore!: SmonObservable;
+  // @Inject('storeObservable') readonly smonStore!: SmonObservable;
+  private readonly smonStore = getModule(SmonModule, this.$store);
 
   public readonly REFRESH_INTERVAL_IN_MS: number = 300;
   public filterFnAutoselectInterval!: NodeJS.Timeout;
-  public appNameOptions: string[] = this.smonStore.appNameList;
+  public appNameOptions: string[] = this.smonStore.profilerApis;
+
+  get appName() {
+    return this.smonStore.currentAppName;
+  }
+  set appName(newVal: string) {
+    this.smonStore.setAppName(newVal);
+  }
 
   beforeDestroy() {
     clearInterval(this.filterFnAutoselectInterval);
@@ -40,7 +51,7 @@ export default class DashboardSmonFilterAppName extends Vue {
     this.filterFnAutoselectInterval = setTimeout(() => {
       update(
         () => {
-          this.appNameOptions = this.smonStore.filterAppListByName(val);
+          this.appNameOptions = this.filterAppListByName(val);
         },
         // next function is available in Quasar v1.7.4+;
         // "ref" is the Vue reference to the QSelect
@@ -61,11 +72,9 @@ export default class DashboardSmonFilterAppName extends Vue {
   public async handleChangedAppNameFn(newVal: string) {
     if (isNullOrEmpty(newVal)) return;
     try {
-      const res = await this.smonStore.fetchDataOnChangedAppName();
-      if (res) {
-        //Trigger render chart
-        this.smonStore.toogleChartRender(true);
-      }
+      const res = await this.smonStore.fetchOrInitStoreByApp(newVal);
+      //Trigger render chart
+      this.smonStore.setToggleRenderChart(true);
     } catch (error) {
       this.$q.notify({
         color: 'negative',
@@ -74,6 +83,14 @@ export default class DashboardSmonFilterAppName extends Vue {
         icon: 'report_problem'
       });
     }
+  }
+
+  public filterAppListByName(val: string): string[] {
+    if (val === '') return this.smonStore.appNames;
+    const needle = val.toLowerCase();
+    return this.smonStore.appNames.filter(
+      v => v.toLowerCase().indexOf(needle) > -1
+    );
   }
 }
 </script>

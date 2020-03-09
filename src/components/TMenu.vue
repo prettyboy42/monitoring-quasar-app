@@ -7,23 +7,27 @@
         <q-icon color="primary" name="dashboard" />
       </q-item-section>
 
-      <q-item-section>Realtime Dashboard</q-item-section>
+      <q-item-section>Realtime ApexCharts</q-item-section>
     </q-item>
     <q-expansion-item
       group="somegroup"
       icon="home_work"
-      label="First"
-      caption="First caption"
+      label="Dashboard"
+      caption="Manage dashboards"
       default-opened
       header-class="text-primary"
     >
-      <q-item clickable v-ripple to="dashboard">
+      <q-item clickable v-ripple to="/dashboard-smon">
+        <q-item-section avatar></q-item-section>
+        <q-item-section>Dashboard Smon</q-item-section>
+      </q-item>
+      <q-item clickable v-ripple to="/dashboard">
         <!-- <q-item-section avatar>
           <q-icon color="primary" name="dashboard" />
         </q-item-section>-->
 
         <q-item-section avatar></q-item-section>
-        <q-item-section>Dashboard</q-item-section>
+        <q-item-section>Dashboard Draggable</q-item-section>
       </q-item>
       <q-expansion-item :header-inset-level="1" label="Receipts" default-opened>
         <q-expansion-item

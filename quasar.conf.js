@@ -84,7 +84,9 @@ module.exports = configure(function(ctx) {
         'QOptionGroup',
         'QToggle',
         'QBtnToggle',
-        'QTooltip'
+        'QTooltip',
+        'QInnerLoading',
+        'QSpinnerIos'
       ],
 
       directives: ['Ripple', 'ClosePopup'],

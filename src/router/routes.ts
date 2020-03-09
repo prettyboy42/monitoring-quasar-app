@@ -13,6 +13,10 @@ const routes: RouteConfig[] = [
       {
         path: '/dashboard',
         component: () => import('pages/GridDraggablePage.vue')
+      },
+      {
+        path: '/dashboard-smon',
+        component: () => import('pages/DashboardSmon.vue')
       }
     ]
   }

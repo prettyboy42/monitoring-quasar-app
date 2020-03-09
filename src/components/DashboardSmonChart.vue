@@ -1,23 +1,31 @@
 <template>
-  <card-base>
-    <apexchart
-      ref="realtimeChart"
-      type="line"
-      :width="chartWidth"
-      :height="chartHeight"
-      :options="chartOptions"
-      :series="chartSeries"
-    />
+  <card-base style="min-height:315px;">
+    <transition appear enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
+      <apexchart
+        v-show="showSimulatedReturnData"
+        ref="realtimeChart"
+        type="line"
+        :width="chartWidth"
+        :height="chartHeight"
+        :options="chartOptions"
+        :series="chartSeries"
+      />
+    </transition>
+    <q-inner-loading :showing="visible">
+      <q-spinner-ios size="50px" color="yellow" />
+    </q-inner-loading>
   </card-base>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Inject, Prop, Watch } from 'vue-property-decorator';
-import SmonObservable, { LEGEND_TYPE } from '../store/observable-smon';
+// import SmonObservable, { LEGEND_TYPE } from '../store/observable-smon';
 import { getModule } from 'vuex-module-decorators';
 import LayoutModule, { TIME_RANGE_ENUM } from '../store/layouts/layout-module';
+import SmonModule from '../store/smon/smon-module';
 import ProfilerService from '../boot/services/monitor-profiler.service';
 import { ChartSeries, isNullOrEmpty } from './models';
+import { LEGEND_TYPE } from '../store/smon/constants';
 import { date } from 'quasar';
 
 @Component({
@@ -30,16 +38,20 @@ export default class DashboardSmonChart extends Vue {
     //A new ! post-fix expression operator may be used to assert that its operand is non-null and non-undefined in contexts
     realtimeChart: HTMLFormElement;
   };
-  @Inject('storeObservable') readonly smonStore!: SmonObservable;
-  private store = getModule(LayoutModule, this.$store);
+  // @Inject('storeObservable') readonly smonStore!: SmonObservable;
+  private smonStore = getModule(SmonModule, this.$store);
+  private layoutStore = getModule(LayoutModule, this.$store);
 
   private readonly apiCaller = new ProfilerService();
   @Prop({ default: '0' }) chartId!: number | string;
   @Prop({ default: 'defaultGroup' }) chartGroup!: string;
   @Prop({ default: '0.0.0.0' }) serverIp!: string;
+  @Prop({ default: '' }) chartTitle!: string;
   @Prop({ default: '100%' }) chartWidth!: number;
   @Prop({ default: '300' }) chartHeight!: number; //auto
 
+  public visible: boolean = true;
+  public showSimulatedReturnData: boolean = false;
   public chartSeries: ChartSeries[] = [];
   public readonly colors: string[] = [
     'linear-gradient( 135deg, #ABDCFF 10%, #0396FF 100%)',
@@ -73,8 +85,17 @@ export default class DashboardSmonChart extends Vue {
         fontFamily: 'Helvetica, Arial'
       }
     },
+    tooltip: {
+      enabled: true,
+      enabledOnSeries: undefined,
+      shared: true,
+      x: {
+        show: true,
+        format: 'dd MMM yyyy HH:mm:ss'
+      }
+    },
     chart: {
-      id: this.formatChartId,
+      id: this.chartId,
       group: this.chartGroup,
       // height: this.chartHeight,
       type: 'line',
@@ -147,14 +168,19 @@ export default class DashboardSmonChart extends Vue {
         style: {
           // colors: '#FCCF31'
         }
-      }
+      },
+      min: 0
     },
     legend: {
-      show: true,
-      showForSingleSeries: this.smonStore.metricValue?.length > 1 || false,
+      show: this.smonStore.enableChartLegend,
+      showForSingleSeries: this.smonStore.currentMetric?.length > 1 || false,
+      showForNullSeries: true,
+      showForZeroSeries: true,
       position:
-        this.smonStore.legendType == LEGEND_TYPE.BY_DAY ? 'right' : 'bottom',
-      inverseOrder: this.smonStore.legendType == LEGEND_TYPE.BY_DAY,
+        this.smonStore.currentLegendType == LEGEND_TYPE.BY_DAY
+          ? 'right'
+          : 'bottom',
+      inverseOrder: this.smonStore.currentLegendType == LEGEND_TYPE.BY_DAY,
       offsetY: 5
     },
     responsive: [
@@ -174,98 +200,112 @@ export default class DashboardSmonChart extends Vue {
     ]
   };
 
-  public get formatChartId(): string {
-    return `realtimeChart_${this.chartId}`;
-  }
-
-  public get chartTitle(): string {
-    return this.serverIp || 'No title';
-  }
-
   created() {
-    if (this.chartSeries.length == 0 && !this.smonStore.isFetchingData) {
-      //Do fetch if chartSeries is empty
-      this.fecthChartSeries();
+    this.fecthChartSeries();
+  }
+
+  updated() {
+    // console.log(`updated-${this.chartTitle}`);
+    // this.toggleOffSpinner();
+  }
+
+  beforeDestroy() {
+    this.$refs.realtimeChart.destroy();
+  }
+
+  private toggleOnSpinner() {
+    this.visible = true;
+    this.showSimulatedReturnData = false;
+  }
+
+  private toggleOffSpinner() {
+    this.visible = false;
+    this.showSimulatedReturnData = true;
+  }
+
+  @Watch('smonStore.enableChartLegend')
+  public handleToogleOnOffLegend(showLegend: boolean) {
+    const first = this.smonStore.getFirstChart;
+    if (first.id == this.chartId) {
+      this.$refs.realtimeChart.updateOptions(
+        {
+          legend: {
+            show: showLegend
+          }
+        },
+        false,
+        false,
+        true
+      );
     }
   }
 
-  @Watch('serverIp')
-  onChangedServerIp(newVal: string) {
-    if (isNullOrEmpty(newVal)) return;
-
-    //Trigger this function in order to change title of chart
+  @Watch('smonStore.enableChartSync')
+  public handleToogleOnOffSyncChart(syncChart: boolean) {
     this.$refs.realtimeChart.updateOptions(
       {
-        title: {
-          text: this.chartTitle
+        chart: {
+          group: syncChart ? this.chartGroup : this.chartId
         }
       },
-      true,
-      true,
-      false //Not synchronized all charts
+      false,
+      false,
+      false
     );
+    // }
   }
 
-  @Watch('smonStore.showLegend')
-  public async handleToogleOnOffLegend(showLegend: boolean) {
-    this.chartOptions = Object.assign({}, this.chartOptions, {
-      legend: {
-        show: showLegend
-      }
-    });
-  }
-
-  @Watch('smonStore.syncChart')
-  public handleToogleOnOffSyncChart(syncChart: boolean) {
-    this.chartOptions = Object.assign({}, this.chartOptions, {
-      chart: {
-        group: syncChart ? this.chartGroup : this.chartId
-      }
-    });
-  }
-
-  @Watch('smonStore.legendType')
+  @Watch('smonStore.chartLegendType')
   public handleToogleLegendType(newVal: LEGEND_TYPE) {
-    this.chartOptions = Object.assign({}, this.chartOptions, {
-      legend: {
-        position: newVal == LEGEND_TYPE.BY_DAY ? 'right' : 'bottom',
-        inverseOrder: this.smonStore.legendType == LEGEND_TYPE.BY_DAY
-      }
+    // this.toggleOnSpinner();
+    this.fecthChartSeries().then(() => {
+      this.$refs.realtimeChart.updateOptions(
+        {
+          legend: {
+            position: newVal == LEGEND_TYPE.BY_DAY ? 'right' : 'bottom',
+            inverseOrder: this.smonStore.currentLegendType == LEGEND_TYPE.BY_DAY
+          }
+        },
+        false,
+        false,
+        true
+      );
     });
   }
 
   @Watch('smonStore.requireRenderChart')
   onChangedrequireRenderChart(val: boolean) {
     if (val) {
+      // this.toggleOnSpinner();
       this.fecthChartSeries();
     }
   }
 
-  @Watch('store.forceRefresh')
+  @Watch('layoutStore.forceRefresh')
   onChangedForceRefresh(val: boolean) {
     if (val) {
       //Do fetch series when user triggered refresh action
       this.fecthChartSeries().then(() => {
-        this.store.setForceRefresh(false);
+        this.layoutStore.setForceRefresh(false);
       });
     }
   }
 
-  @Watch('store.tickTimeInterval')
+  @Watch('layoutStore.tickTimeInterval')
   onChangedTickInterval(val: number) {
     if (val > 0) {
       //Do fetch series when user triggered refresh action
       this.fecthChartSeries().then(() => {
-        this.store.setForceRefresh(false);
+        this.layoutStore.setForceRefresh(false);
       });
     }
   }
 
-  @Watch('store.timeRangeInterval')
+  @Watch('layoutStore.timeRangeInterval')
   onChangedTimeRangeInterval() {
     //Do fetch series when user triggered refresh action
     this.fecthChartSeries().then(() => {
-      this.store.setForceRefresh(false);
+      this.layoutStore.setForceRefresh(false);
     });
   }
 
@@ -352,19 +392,19 @@ export default class DashboardSmonChart extends Vue {
   }
 
   private async fecthChartSeries() {
-    // const to = Date.now();
-    // const diff = date.subtractFromDate(to, { minutes: 30 });
-    // const from = diff.getTime();
+    this.toggleOnSpinner();
 
-    const timeRange = this.calculateTimeRange(this.store.timeRangeInterval);
+    const timeRange = this.calculateTimeRange(
+      this.layoutStore.timeRangeInterval
+    );
     const dayRange = [0, 7].join(',');
-    const timeInterval = this.store.tickTimeInterval; // [1, 2, 3, 5, 10][0];
-    const chartType = this.smonStore.legendType;
+    const timeInterval = this.layoutStore.tickTimeInterval; // [1, 2, 3, 5, 10][0];
+    const chartType = this.smonStore.currentLegendType;
     try {
       const chartRes = await this.apiCaller.getChartData(
         this.smonStore.appName,
-        this.smonStore.threadApiName,
-        this.smonStore.metricValue.join(','),
+        this.smonStore.currentProfilerApi,
+        this.smonStore.buildMetricParams,
         this.serverIp,
         timeRange.from,
         timeRange.to,
@@ -376,16 +416,18 @@ export default class DashboardSmonChart extends Vue {
         // Render nodata
         this.renderNodataChart();
       }
-      this.chartSeries = chartRes.data.data.result?.listSeries || [];
+      const series: ChartSeries[] = chartRes.data.data.result?.listSeries || [];
+      this.chartSeries = series;
     } catch (error) {
       this.$q.notify({
         color: 'negative',
         position: 'top',
-        message: `fecthChartSeries failed. serverIp:${this.serverIp}, chartId:${this.chartId}`,
+        message: `fecthChartSeries failed. chartId:${this.chartId}, error:${error}`,
         icon: 'report_problem'
       });
     }
-    this.smonStore.toogleChartRender(false);
+    this.smonStore.setToggleRenderChart(false);
+    this.toggleOffSpinner();
   }
 }
 </script>

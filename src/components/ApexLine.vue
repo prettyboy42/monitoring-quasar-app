@@ -5,13 +5,13 @@
       type="line"
       height="250"
       :options="chartOptions"
-      :series="chartSeries"
+      :series="series"
     />
   </card-base>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import CardBase from 'components/CardBase.vue';
 import { ChartSeries } from './models';
 
@@ -28,7 +28,6 @@ export default class ApexLine extends Vue {
   @Prop() chartId!: string;
   @Prop() chartGroup!: string;
   @Prop() chartTitle!: string;
-  @Prop() chartSeries!: ChartSeries;
   public updateSeriesInterval!: NodeJS.Timeout;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -99,7 +98,7 @@ export default class ApexLine extends Vue {
       enabled: false
     },
     xaxis: {
-      type: 'datetime',
+      type: 'number',
       // categories: [
       //   'Jan',
       //   'Feb',
@@ -155,30 +154,98 @@ export default class ApexLine extends Vue {
   public series: any = [
     {
       name: 'Desktops',
-      data: [10, 41, 35, 51, 49, 62, 69, 91, 99]
+      data: [
+        9,
+        98,
+        34,
+        54,
+        67,
+        45,
+        49,
+        34,
+        73,
+        98,
+        130,
+        32,
+        43,
+        91,
+        65,
+        87,
+        43,
+        51,
+        56,
+        124,
+        26
+      ]
     },
     {
       name: 'Android',
-      data: [4, 23, 20, 51, 67, 45, 75, 102, 120]
+      data: [
+        4,
+        23,
+        20,
+        51,
+        67,
+        45,
+        49,
+        62,
+        73,
+        98,
+        130,
+        32,
+        43,
+        91,
+        99,
+        41,
+        87,
+        51,
+        75,
+        102,
+        120
+      ]
     },
     {
       name: 'IOS',
-      data: [8, 23, 30, 45, 87, 75, 90, 127, 134]
+      data: [
+        4,
+        33,
+        25,
+        51,
+        67,
+        45,
+        13,
+        23,
+        73,
+        54,
+        173,
+        32,
+        89,
+        91,
+        65,
+        41,
+        87,
+        124,
+        57,
+        166,
+        176
+      ]
     }
   ];
 
   mounted() {
-    // this.setDataLineChart();
+    if (this.$store.state.layout.refreshTimeInterval > 0) {
+      this.setDataLineChart(this.$store.state.layout.refreshTimeInterval);
+    }
   }
 
   beforeDestroy() {
-    // clearInterval(this.updateSeriesInterval);
+    clearInterval(this.updateSeriesInterval);
   }
 
   public getRandomArbitrary(): number {
     return Math.floor(Math.random() * 99);
   }
-  setDataLineChart(): void {
+  setDataLineChart(refreshInterval: number): void {
     this.updateSeriesInterval = setInterval(() => {
       this.series[0].data.splice(0, 1);
       this.series[0].data.push(this.getRandomArbitrary());
@@ -187,7 +254,7 @@ export default class ApexLine extends Vue {
       this.series[2].data.splice(0, 1);
       this.series[2].data.push(this.getRandomArbitrary());
       this.updateSeriesLine();
-    }, 5000);
+    }, refreshInterval);
   }
   public updateSeriesLine(): void {
     this.$refs.realtimeChart.updateSeries(
@@ -205,6 +272,15 @@ export default class ApexLine extends Vue {
       false,
       true
     );
+  }
+
+  @Watch('$store.state.layout.refreshTimeInterval')
+  private onChangedRefreshTimeInterval(newVal: number) {
+    if (newVal == 0) {
+      clearInterval(this.updateSeriesInterval);
+    } else {
+      this.setDataLineChart(newVal);
+    }
   }
 }
 </script>

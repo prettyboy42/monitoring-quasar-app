@@ -3,6 +3,7 @@ import { VueConstructor } from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
 import LayoutModule from './layouts/layout-module';
 import { LayoutState } from './layouts/state';
+import SmonModule from './smon/smon-module';
 
 /*
  * If not building with SSR mode, you can
@@ -35,7 +36,8 @@ const store: StoreOptions<RootState> = {
   // mutations: mutations,
   // actions: actions,
   modules: {
-    layout: LayoutModule
+    layout: LayoutModule,
+    smon: SmonModule
   },
   // enable strict mode (adds overhead!)
   // for dev mode only
