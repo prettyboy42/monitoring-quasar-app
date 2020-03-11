@@ -105,9 +105,6 @@ export default class SmonModule extends VuexModule {
   [constants.UPDATE_METRIC_VALUE](val: string[]) {
     this.metricValues.splice(0);
     this.metricValues = [...val];
-    console.log(
-      `[UPDATE_METRIC_VALUE] changed to ${val}, params:${this.buildMetricParams}, values:${this.metricValues}`
-    );
   }
 
   @Mutation
