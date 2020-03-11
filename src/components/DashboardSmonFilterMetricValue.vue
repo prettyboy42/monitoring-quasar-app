@@ -3,7 +3,6 @@
     v-model="metricValue"
     :options="smonStore.metricValueList"
     :type="smonStore.metricGroup"
-    @input="handleChangedMetricValueFn"
     color="primary"
     size="md"
     inline
@@ -29,17 +28,14 @@ export default class DashboardSmonFilterMetricValue extends Vue {
 
   public set metricValue(val: string | string[]) {
     this.smonStore.setMetricValues(typeof val === 'string' ? [val] : val);
+    //Check and re-render chart
+    this.smonStore.setToggleRenderChart(true);
   }
 
   @Watch('smonStore.chartLegendType')
   public onChangedlegendType(val: string): void {
-    this.smonStore.setMetricValues([this.smonStore.metricValueList[0].value]);
-  }
-
-  public handleChangedMetricValueFn(newVal: string[]) {
-    if (typeof newVal == 'undefined' || !newVal || newVal.length == 0) return;
-
-    //Check and re-render chart
+    const values = [this.smonStore.metricValueList[0].value];
+    this.smonStore.setMetricValues(values);
     this.smonStore.setToggleRenderChart(true);
   }
 }

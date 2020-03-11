@@ -173,16 +173,13 @@ export default class DashboardSmonHighcharts extends Vue {
 
   @Watch('smonStore.chartLegendType')
   public handleToogleLegendType(newVal: LEGEND_TYPE) {
-    // this.toggleOnSpinner();
-    this.fecthChartSeries().then(() => {
-      this.chartOptions = Object.assign({}, this.chartOptions, {
-        legend: {
-          layout: newVal == LEGEND_TYPE.BY_DAY ? 'vertical' : 'horizontal',
-          align: newVal == LEGEND_TYPE.BY_DAY ? 'right' : 'center',
-          reversed: newVal == LEGEND_TYPE.BY_DAY,
-          verticalAlign: newVal == LEGEND_TYPE.BY_DAY ? 'top' : 'bottom'
-        }
-      });
+    this.chartOptions = Object.assign({}, this.chartOptions, {
+      legend: {
+        layout: newVal == LEGEND_TYPE.BY_DAY ? 'vertical' : 'horizontal',
+        align: newVal == LEGEND_TYPE.BY_DAY ? 'right' : 'center',
+        reversed: newVal == LEGEND_TYPE.BY_DAY,
+        verticalAlign: newVal == LEGEND_TYPE.BY_DAY ? 'top' : 'bottom'
+      }
     });
   }
 

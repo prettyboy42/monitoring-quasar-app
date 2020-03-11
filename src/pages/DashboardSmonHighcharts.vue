@@ -30,6 +30,7 @@ import { Vue, Component, Provide, Watch } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
 import SmonModule from '../store/smon/smon-module';
 import Highcharts from 'highcharts';
+import { LEGEND_TYPE } from '../store/smon/constants';
 
 @Component({
   components: {
@@ -96,25 +97,41 @@ export default class DashboardSmon extends Vue {
     }
   }
 
+  @Watch('smonStore.chartLegendType')
+  public handleToogleLegendType(newVal: string) {
+    if (newVal == LEGEND_TYPE.BY_DAY) {
+      this.removeSyncChart();
+      this.registerSyncChart();
+    }
+  }
+
   @Watch('smonStore.enableChartSync')
   private onChangedSyncChartMode(newVal: boolean) {
     if (newVal) {
-      /**
-       * In order to synchronize tooltips and crosshairs, override the
-       * built-in events with handlers defined on the parent element.
-       */
-      ['mousemove', 'mouseleave', 'touchmove', 'touchstart'].forEach(
-        eventType => {
-          this.$el.addEventListener(eventType, this.handleSynchronizedChart);
-        }
-      );
+      this.registerSyncChart();
     } else {
-      ['mousemove', 'mouseleave', 'touchmove', 'touchstart'].forEach(
-        eventType => {
-          this.$el.removeEventListener(eventType, this.handleSynchronizedChart);
-        }
-      );
+      this.removeSyncChart();
     }
+  }
+
+  private registerSyncChart() {
+    /**
+     * In order to synchronize tooltips and crosshairs, override the
+     * built-in events with handlers defined on the parent element.
+     */
+    ['mousemove', 'mouseleave', 'touchmove', 'touchstart'].forEach(
+      eventType => {
+        this.$el.addEventListener(eventType, this.handleSynchronizedChart);
+      }
+    );
+  }
+
+  private removeSyncChart() {
+    ['mousemove', 'mouseleave', 'touchmove', 'touchstart'].forEach(
+      eventType => {
+        this.$el.removeEventListener(eventType, this.handleSynchronizedChart);
+      }
+    );
   }
 
   private handleSynchronizedChart(e: any) {
@@ -131,9 +148,14 @@ export default class DashboardSmon extends Vue {
           return;
         }
         if (e.type === 'mousemove') {
-          point.highlight(event);
+          if (typeof point.highlight === 'function') {
+            point.highlight(event);
+          }
         } else {
-          point.onMouseOut();
+          if (typeof point.highlight === 'function') {
+            point.onMouseOut();
+          }
+
           chart.tooltip.hide(point);
           chart.xAxis[0].hideCrosshair();
         }

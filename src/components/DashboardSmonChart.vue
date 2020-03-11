@@ -272,20 +272,17 @@ export default class DashboardSmonChart extends Vue {
 
   @Watch('smonStore.chartLegendType')
   public handleToogleLegendType(newVal: LEGEND_TYPE) {
-    // this.toggleOnSpinner();
-    this.fecthChartSeries().then(() => {
-      this.$refs.realtimeChart.updateOptions(
-        {
-          legend: {
-            position: newVal == LEGEND_TYPE.BY_DAY ? 'right' : 'bottom',
-            inverseOrder: this.smonStore.currentLegendType == LEGEND_TYPE.BY_DAY
-          }
-        },
-        false,
-        false,
-        true
-      );
-    });
+    this.$refs.realtimeChart.updateOptions(
+      {
+        legend: {
+          position: newVal == LEGEND_TYPE.BY_DAY ? 'right' : 'bottom',
+          inverseOrder: this.smonStore.currentLegendType == LEGEND_TYPE.BY_DAY
+        }
+      },
+      false,
+      false,
+      true
+    );
   }
 
   @Watch('smonStore.requireRenderChart')
