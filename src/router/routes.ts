@@ -17,6 +17,10 @@ const routes: RouteConfig[] = [
       {
         path: '/dashboard-smon',
         component: () => import('pages/DashboardSmon.vue')
+      },
+      {
+        path: '/dashboard-smon-highcharts',
+        component: () => import('pages/DashboardSmonHighcharts.vue')
       }
     ]
   }

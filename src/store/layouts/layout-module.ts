@@ -58,7 +58,7 @@ export default class LayoutModule extends VuexModule {
   public footerState: boolean = Platform.is.desktop || false;
   public forceRefresh: boolean = false;
   public refreshTimeInterval: number = 0;
-  public tickTimeInterval: number = 1;
+  public tickTimeInterval: number = 30;
   public timeRangeInterval: number = TIME_RANGE_ENUM.WHOLE_TODAY;
 
   @Mutation

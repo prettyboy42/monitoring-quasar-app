@@ -15,6 +15,7 @@ export default class SmonModule extends VuexModule {
   public static readonly MODULE_NAME = 'smon';
   private readonly storeObs = new SmonObservable();
   private readonly apiCaller = new ProfilerService();
+  isInitialized: boolean = false;
   appName: string = '';
   apiName: string = '';
   metricType: string = '';
@@ -149,6 +150,11 @@ export default class SmonModule extends VuexModule {
     this.requireRenderChart = val;
   }
 
+  @Mutation
+  [constants.SET_COMPLETE_INIT_STORE](val: boolean) {
+    this.isInitialized = val;
+  }
+
   /**
    * Defines actions
    *
@@ -240,6 +246,7 @@ export default class SmonModule extends VuexModule {
         return item;
       });
       this[constants.UPDATE_CHARTS](chartItems);
+      this[constants.SET_COMPLETE_INIT_STORE](true); //Mark init store is completed
     } catch (error) {
       Notify.create({
         color: 'negative',

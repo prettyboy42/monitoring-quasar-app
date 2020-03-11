@@ -19,7 +19,11 @@
     >
       <q-item clickable v-ripple to="/dashboard-smon">
         <q-item-section avatar></q-item-section>
-        <q-item-section>Dashboard Smon</q-item-section>
+        <q-item-section>Smon Apexcharts</q-item-section>
+      </q-item>
+      <q-item clickable v-ripple to="/dashboard-smon-highcharts">
+        <q-item-section avatar></q-item-section>
+        <q-item-section>Smon Highcharts</q-item-section>
       </q-item>
       <q-item clickable v-ripple to="/dashboard">
         <!-- <q-item-section avatar>

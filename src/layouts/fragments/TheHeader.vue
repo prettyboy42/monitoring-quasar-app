@@ -141,10 +141,20 @@ export default class TheHeader extends Vue {
   public readonly timeRangeMenuList = TIME_RANGE_INTERVAL;
   public refreshLabel: string = this.defaultRefreshLabel;
   public refreshIcon: string = this.defaultRefreshIcon;
-  public timeRangeLabel: string = this.timeRangeMenuList[0].label;
-  public tickTimeLabel: string = this.formatDisplayTickTime(
-    TICK_TIME_INTERVAL[0].label
-  );
+
+  get tickTimeLabel() {
+    const found = TICK_TIME_INTERVAL.find(
+      it => it.value == this.store.tickTimeInterval
+    );
+    return found ? this.formatDisplayTickTime(found.label) : '';
+  }
+
+  get timeRangeLabel() {
+    const found = TIME_RANGE_INTERVAL.find(
+      it => it.value == this.store.timeRangeInterval
+    );
+    return found ? this.formatDisplayTickTime(found.label) : '';
+  }
 
   get headerState() {
     return this.store.headerState;
@@ -192,7 +202,6 @@ export default class TheHeader extends Vue {
     );
 
     if (found) {
-      this.timeRangeLabel = found.label;
       this.store.setTimeRangeInterval(found.value);
     }
   }
@@ -205,7 +214,6 @@ export default class TheHeader extends Vue {
   public onTickTimeClickFn(e: any) {
     const found = TICK_TIME_INTERVAL.find(it => it.label == e.target.innerText);
     if (found) {
-      this.tickTimeLabel = this.formatDisplayTickTime(found.label);
       this.store.setTickTimeInterval(found.value);
     }
   }

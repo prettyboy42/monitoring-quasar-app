@@ -1,5 +1,5 @@
 <template>
-  <card-base style="min-height:315px;">
+  <card-base :style="chartStyle">
     <transition appear enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
       <apexchart
         v-show="showSimulatedReturnData"
@@ -21,10 +21,10 @@
 import { Vue, Component, Inject, Prop, Watch } from 'vue-property-decorator';
 // import SmonObservable, { LEGEND_TYPE } from '../store/observable-smon';
 import { getModule } from 'vuex-module-decorators';
-import LayoutModule, { TIME_RANGE_ENUM } from '../store/layouts/layout-module';
+import LayoutModule from '../store/layouts/layout-module';
 import SmonModule from '../store/smon/smon-module';
 import ProfilerService from '../boot/services/monitor-profiler.service';
-import { ChartSeries, isNullOrEmpty } from './models';
+import { ChartSeries, isNullOrEmpty, calculateTimeRange } from './models';
 import { LEGEND_TYPE } from '../store/smon/constants';
 import { date } from 'quasar';
 
@@ -48,11 +48,12 @@ export default class DashboardSmonChart extends Vue {
   @Prop({ default: '0.0.0.0' }) serverIp!: string;
   @Prop({ default: '' }) chartTitle!: string;
   @Prop({ default: '100%' }) chartWidth!: number;
-  @Prop({ default: '300' }) chartHeight!: number; //auto
 
   public visible: boolean = true;
   public showSimulatedReturnData: boolean = false;
   public chartSeries: ChartSeries[] = [];
+  private readonly parentHeightOffset: number = 15;
+  private readonly defaultHeightChart = 300;
   public readonly colors: string[] = [
     'linear-gradient( 135deg, #ABDCFF 10%, #0396FF 100%)',
     'linear-gradient( 135deg, #2AFADF 10%, #4C83FF 100%)',
@@ -97,7 +98,7 @@ export default class DashboardSmonChart extends Vue {
     chart: {
       id: this.chartId,
       group: this.chartGroup,
-      // height: this.chartHeight,
+      parentHeightOffset: this.parentHeightOffset,
       type: 'line',
       toolbar: {
         show: true,
@@ -200,13 +201,27 @@ export default class DashboardSmonChart extends Vue {
     ]
   };
 
-  created() {
-    this.fecthChartSeries();
+  get minHeightChart() {
+    return this.parentHeightOffset + this.defaultHeightChart;
   }
 
-  updated() {
-    // console.log(`updated-${this.chartTitle}`);
-    // this.toggleOffSpinner();
+  get maxHeightChart() {
+    const baseH = this.parentHeightOffset * 10 + this.defaultHeightChart;
+    return this.smonStore.chartList.length > 1 ? baseH + 180 : baseH;
+  }
+
+  get chartHeight() {
+    return this.smonStore.chartList.length > 1
+      ? 'auto'
+      : this.maxHeightChart - this.parentHeightOffset;
+  }
+
+  get chartStyle() {
+    return `min-height:${this.minHeightChart}px;max-height:${this.maxHeightChart}px;`;
+  }
+
+  created() {
+    this.fecthChartSeries();
   }
 
   beforeDestroy() {
@@ -295,18 +310,14 @@ export default class DashboardSmonChart extends Vue {
   onChangedTickInterval(val: number) {
     if (val > 0) {
       //Do fetch series when user triggered refresh action
-      this.fecthChartSeries().then(() => {
-        this.layoutStore.setForceRefresh(false);
-      });
+      this.fecthChartSeries();
     }
   }
 
   @Watch('layoutStore.timeRangeInterval')
   onChangedTimeRangeInterval() {
     //Do fetch series when user triggered refresh action
-    this.fecthChartSeries().then(() => {
-      this.layoutStore.setForceRefresh(false);
-    });
+    this.fecthChartSeries();
   }
 
   private renderNodataChart() {
@@ -325,78 +336,10 @@ export default class DashboardSmonChart extends Vue {
     );
   }
 
-  private calculateTimeRange(val: number) {
-    const now = Date.now();
-    switch (val) {
-      case TIME_RANGE_ENUM.WHOLE_TODAY:
-        return {
-          from: date.startOfDate(now, 'day').getTime(),
-          to: date.endOfDate(now, 'day').getTime()
-        };
-      case TIME_RANGE_ENUM.TODAY_TO_NOW:
-        return {
-          from: date.startOfDate(now, 'day').getTime(),
-          to: now
-        };
-      case TIME_RANGE_ENUM.LAST_15_MINUTES:
-        return {
-          from: date.subtractFromDate(now, { minutes: 15 }).getTime(),
-          to: now
-        };
-      case TIME_RANGE_ENUM.LAST_30_MINUTES:
-        return {
-          from: date.subtractFromDate(now, { minutes: 30 }).getTime(),
-          to: now
-        };
-      case TIME_RANGE_ENUM.LAST_AN_HOUR:
-        return {
-          from: date.subtractFromDate(now, { hours: 1 }).getTime(),
-          to: now
-        };
-      case TIME_RANGE_ENUM.LAST_2_HOURS:
-        return {
-          from: date.subtractFromDate(now, { hours: 2 }).getTime(),
-          to: now
-        };
-      case TIME_RANGE_ENUM.LAST_4_HOURS:
-        return {
-          from: date.subtractFromDate(now, { hours: 4 }).getTime(),
-          to: now
-        };
-      case TIME_RANGE_ENUM.LAST_8_HOURS:
-        return {
-          from: date.subtractFromDate(now, { hours: 8 }).getTime(),
-          to: now
-        };
-      case TIME_RANGE_ENUM.LAST_12_HOURS:
-        return {
-          from: date.subtractFromDate(now, { hours: 12 }).getTime(),
-          to: now
-        };
-      case TIME_RANGE_ENUM.LAST_24_HOURS:
-        return {
-          from: date.subtractFromDate(now, { hours: 24 }).getTime(),
-          to: now
-        };
-      case TIME_RANGE_ENUM.LAST_7_DAYS:
-        return {
-          from: date.subtractFromDate(now, { days: 7 }).getTime(),
-          to: now
-        };
-      default:
-        return {
-          from: date.startOfDate(now, 'day').getTime(),
-          to: date.endOfDate(now, 'day').getTime()
-        };
-    }
-  }
-
   private async fecthChartSeries() {
     this.toggleOnSpinner();
 
-    const timeRange = this.calculateTimeRange(
-      this.layoutStore.timeRangeInterval
-    );
+    const timeRange = calculateTimeRange(this.layoutStore.timeRangeInterval);
     const dayRange = [0, 7].join(',');
     const timeInterval = this.layoutStore.tickTimeInterval; // [1, 2, 3, 5, 10][0];
     const chartType = this.smonStore.currentLegendType;

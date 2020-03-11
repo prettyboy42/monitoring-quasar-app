@@ -80,7 +80,7 @@ export default class MonitorProfilerService {
       it => it.name === metricType
     )
       .flatMap(it => it.value)
-      .map((it: string) => ({ label: it, value: it }));
+      .map(it => ({ label: it.display, value: it.rawValue }));
 
     return result || [];
   }

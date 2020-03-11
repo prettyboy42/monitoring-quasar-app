@@ -9,7 +9,7 @@
       :class="$q.platform.is.desktop===true?'row q-col-gutter-sm justify-start':'column q-col-gutter-xs justify-center'"
     >
       <div :class="chartGridClass" v-for="item in smonStore.chartList" :key="item.id">
-        <dashboard-smon-chart
+        <dashboard-smon-highcharts
           :chart-id="item.id"
           :chart-title="item.title"
           :chart-group="chartGroup"
@@ -29,27 +29,35 @@
 import { Vue, Component, Provide, Watch } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
 import SmonModule from '../store/smon/smon-module';
+import Highcharts from 'highcharts';
 
 @Component({
   components: {
     DashboardSmonFilter: () => import('components/DashboardSmonFilter.vue'),
-    DashboardSmonChart: () => import('../components/DashboardSmonChart.vue')
+    DashboardSmonHighcharts: () =>
+      import('components/DashboardSmonHighcharts.vue')
   }
 })
 export default class DashboardSmon extends Vue {
   private readonly smonStore = getModule(SmonModule, this.$store);
 
   private refreshChartInterval!: NodeJS.Timeout;
+
   public chartGroup: string = 'serviceMon';
 
-  async created() {
+  created() {
     if (!this.smonStore.isInitialized) {
-      await this.smonStore.fetchOrInitStoreByApp();
+      this.smonStore.fetchOrInitStoreByApp();
     }
+  }
+
+  mounted() {
+    this.onChangedSyncChartMode(this.smonStore.enableChartSync);
   }
 
   beforeDestroy() {
     clearInterval(this.refreshChartInterval);
+    this.onChangedSyncChartMode(false);
   }
 
   get charts() {
@@ -85,6 +93,51 @@ export default class DashboardSmon extends Vue {
       clearInterval(this.refreshChartInterval);
     } else {
       this.registerRefreshChartInterval(newVal);
+    }
+  }
+
+  @Watch('smonStore.enableChartSync')
+  private onChangedSyncChartMode(newVal: boolean) {
+    if (newVal) {
+      /**
+       * In order to synchronize tooltips and crosshairs, override the
+       * built-in events with handlers defined on the parent element.
+       */
+      ['mousemove', 'mouseleave', 'touchmove', 'touchstart'].forEach(
+        eventType => {
+          this.$el.addEventListener(eventType, this.handleSynchronizedChart);
+        }
+      );
+    } else {
+      ['mousemove', 'mouseleave', 'touchmove', 'touchstart'].forEach(
+        eventType => {
+          this.$el.removeEventListener(eventType, this.handleSynchronizedChart);
+        }
+      );
+    }
+  }
+
+  private handleSynchronizedChart(e: any) {
+    for (let i = 0; i < Highcharts.charts.length; ++i) {
+      let chart = Highcharts.charts[i];
+      if (chart) {
+        let event = chart.pointer.normalize(e.originalEvent || e.target); // Find coordinates within the chart
+        event.chartX = e.offsetX;
+        let point: any;
+        for (let j = 0; j < chart.series.length && !point; ++j) {
+          point = chart.series[j].searchPoint(event, true);
+        }
+        if (!point) {
+          return;
+        }
+        if (e.type === 'mousemove') {
+          point.highlight(event);
+        } else {
+          point.onMouseOut();
+          chart.tooltip.hide(point);
+          chart.xAxis[0].hideCrosshair();
+        }
+      }
     }
   }
 }

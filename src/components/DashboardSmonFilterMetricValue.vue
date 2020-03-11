@@ -31,13 +31,8 @@ export default class DashboardSmonFilterMetricValue extends Vue {
     this.smonStore.setMetricValues(typeof val === 'string' ? [val] : val);
   }
 
-  @Watch('smonStore.legendType')
+  @Watch('smonStore.chartLegendType')
   public onChangedlegendType(val: string): void {
-    // if (val === LEGEND_TYPE.TIME_RANGE) {
-    //   this.smonStore.metricGroupType = 'checkbox';
-    // } else if (val === LEGEND_TYPE.BY_DAY) {
-    //   this.smonStore.metricGroupType = 'radio';
-    // }
     this.smonStore.setMetricValues([this.smonStore.metricValueList[0].value]);
   }
 
