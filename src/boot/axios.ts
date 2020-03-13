@@ -1,13 +1,14 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { boot } from 'quasar/wrappers';
 import { VueConstructor } from 'vue';
+import { storageUtils } from '../boot/services/storage-utils';
 
 const TIMEOUT = 1000000;
 const onRequestSuccess = (config: AxiosRequestConfig) => {
   const jwtOauthCode =
     'hmlOi9AsrM2nOEByk-Iu7wDphURSnBKFvaZFxjFaemRORBRXnxs3GDu2rx7sfCPFZ17PhOAtZqgC6EkbY9FqHPX7nDMPrPONYKcIsCdyZoRyJ_ly-kE95VSoXCdEc-aRdaNOkQ7WqaNDJw2a__BQ0wa6ywMqnkP0pHJGmTIvp7AqHOtfdQ3iKEe9WuZYlUnW_osA-us4n7-KMl3NuUhBNCWEYkFYg9DWhrsYsxtTloQh5uwtgfBzHOeq-TgdrR8BrZf8rkcXD6JLAHsNzuqNFyOVJV-Uq2Djyb49lRQjwwg9DxTqbTxQy91__0gCcV-Gkbpn5TwKyfMCKlzTzkpnffyAXLEODb9Nb9g4RW';
 
-  const token = jwtOauthCode;
+  const token = storageUtils.getOauthCode();
   if (token) {
     if (!config.headers) {
       config.headers = {};

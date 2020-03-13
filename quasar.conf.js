@@ -7,6 +7,7 @@ const { configure } = require('quasar/wrappers');
 
 module.exports = configure(function(ctx) {
   return {
+    preFetch: true,
     supportTS: {
       tsCheckerConfig: {
         eslint: true
@@ -20,7 +21,7 @@ module.exports = configure(function(ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/cli-documentation/boot-files
-    boot: ['i18n', 'axios', 'apex', 'highcharts'],
+    boot: ['i18n', 'axios', 'apex', 'highcharts', 'hello', 'services-inject'],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: ['app.sass'],
@@ -86,13 +87,20 @@ module.exports = configure(function(ctx) {
         'QBtnToggle',
         'QTooltip',
         'QInnerLoading',
-        'QSpinnerIos'
+        'QSpinnerIos',
+        'QDialog'
       ],
 
       directives: ['Ripple', 'ClosePopup'],
 
       // Quasar plugins
-      plugins: ['AppFullscreen', 'Notify'],
+      plugins: [
+        'AppFullscreen',
+        'Notify',
+        'Dialog',
+        'LocalStorage',
+        'SessionStorage'
+      ],
 
       config: {
         dark: 'auto',
@@ -111,7 +119,7 @@ module.exports = configure(function(ctx) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       scopeHoisting: true,
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
       showProgress: true,
       gzip: false,
       analyze: false,

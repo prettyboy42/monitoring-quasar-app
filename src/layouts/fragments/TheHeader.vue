@@ -77,6 +77,11 @@
         <q-list>
           <t-avatar-box></t-avatar-box>
           <q-separator />
+          <q-item v-if="authenticated" to="/profile" clickable v-ripple>
+            <q-item-section>
+              <q-item-label>View profile</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item v-if="!authenticated" to="/login" clickable v-close-popup>
             <q-item-section>
               <q-item-label>Login</q-item-label>
@@ -118,13 +123,14 @@
 </template>
 
 <script lang='ts'>
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Inject } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
 import LayoutModule, {
   AUTO_REFRESH_INTERVAL,
   TICK_TIME_INTERVAL,
   TIME_RANGE_INTERVAL
 } from '../../store/layouts/layout-module';
+import AuthService from '../../boot/services/auth.service';
 
 @Component({
   components: {
@@ -133,6 +139,9 @@ import LayoutModule, {
 })
 export default class TheHeader extends Vue {
   store = getModule(LayoutModule, this.$store);
+  @Inject('authService')
+  private readonly auth!: () => AuthService;
+
   @Prop({ default: 'No headline' }) readonly headline!: string;
   private readonly defaultRefreshLabel: string = 'Auto refresh';
   private readonly defaultRefreshIcon: string = 'autorenew';
@@ -173,7 +182,11 @@ export default class TheHeader extends Vue {
   }
 
   public get authenticated(): boolean {
-    return false;
+    return this.$store.getters.authenticated;
+  }
+
+  public logout() {
+    this.auth().logOut();
   }
 
   public isMobilePlatform(): boolean {

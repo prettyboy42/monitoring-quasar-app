@@ -8,6 +8,11 @@
         </q-item>
         <q-separator />
         <q-expansion-item group="somegroup" label="Account" caption="First caption" default-opened>
+          <q-item v-if="authenticated" to="/profile" clickable v-ripple>
+            <q-item-section>
+              <q-item-label>View profile</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item v-if="!authenticated" to="/login" clickable v-ripple>
             <q-item-section>
               <q-item-label>Login</q-item-label>

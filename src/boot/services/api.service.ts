@@ -1,20 +1,6 @@
 import { AxiosPromise, AxiosRequestConfig } from 'axios';
 import { axiosMain } from '../axios';
-
-export interface ApiRequest {
-  url: string;
-  config?: AxiosRequestConfig;
-  data: object;
-}
-
-export interface ApiResult {
-  error: number;
-  message: string;
-  data: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    result: any;
-  };
-}
+import { ApiRequest, ApiResult } from './types';
 
 export default class ApiService {
   // public constructor(baseUrl: string, headerParams?: object) {
@@ -67,3 +53,6 @@ export default class ApiService {
     return axiosMain(data);
   }
 }
+
+const apiService = new ApiService();
+export { apiService };

@@ -1,7 +1,14 @@
 import Vue from 'vue';
+import Component from 'vue-class-component';
 import VueRouter from 'vue-router';
-
 import routes from './routes';
+
+//Register in order to hook in Error.vue
+Component.registerHooks([
+  'beforeRouteEnter',
+  'beforeRouteLeave',
+  'beforeRouteUpdate' // for vue-router 2.2+
+]);
 
 Vue.use(VueRouter);
 
@@ -14,7 +21,7 @@ Vue.use(VueRouter);
  * with the Router instance.
  */
 
-export default function (/* { store, ssrContext } */) {
+export default function(/* { store, ssrContext } */) {
   const Router = new VueRouter({
     scrollBehavior: () => ({ x: 0, y: 0 }),
     routes,
@@ -23,7 +30,7 @@ export default function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     mode: process.env.VUE_ROUTER_MODE,
-    base: process.env.VUE_ROUTER_BASE,
+    base: process.env.VUE_ROUTER_BASE
   });
 
   return Router;

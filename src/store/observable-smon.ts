@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import { Notify } from 'quasar';
+import { ApiResult } from 'src/boot/services/types';
 import Vue from 'vue';
-import { ApiResult } from '../boot/services/api.service';
 import ProfilerService from '../boot/services/monitor-profiler.service';
 
 export const CONST_METRIC_TYPE = [

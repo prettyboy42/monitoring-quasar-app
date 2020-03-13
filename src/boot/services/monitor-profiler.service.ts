@@ -1,7 +1,7 @@
 import { AxiosPromise, AxiosResponse } from 'axios';
 import * as constants from '../../store/smon/constants';
 import { axiosMain } from '../axios';
-import ApiService, { ApiResult } from './api.service';
+import { ApiResult } from './types';
 
 const BASE_URL = '/monitor-profiler';
 const API_GET_ALL_TYPE_BY_APP = BASE_URL + '/get-monitor-type-support';
@@ -11,8 +11,6 @@ const API_GET_ALL_PROFILER_BY_APP = BASE_URL + '/get-all-profiler-by-app-name';
 const API_GET_CHART_DATA = BASE_URL + '/get-chart-profiler';
 
 export default class MonitorProfilerService {
-  private readonly apiCaller = new ApiService();
-
   public async fetchAllAppName() {
     let listAppName: string[] = [];
     const res: AxiosResponse<ApiResult> = await axiosMain.get(
