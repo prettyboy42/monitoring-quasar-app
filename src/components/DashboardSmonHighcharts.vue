@@ -24,7 +24,7 @@ import LayoutModule, { TIME_RANGE_ENUM } from '../store/layouts/layout-module';
 import SmonModule from '../store/smon/smon-module';
 import ProfilerService from '../boot/services/monitor-profiler.service';
 import { ChartSeries, isNullOrEmpty, calculateTimeRange } from './models';
-import { LEGEND_TYPE } from '../store/smon/constants';
+import { LEGEND_TYPE, METRIC_TYPE } from '../store/smon/constants';
 import Highcharts from 'highcharts';
 
 @Component({
@@ -222,13 +222,8 @@ export default class DashboardSmonHighcharts extends Vue {
     const timeInterval = this.layoutStore.tickTimeInterval; // [1, 2, 3, 5, 10][0];
     const chartType = this.smonStore.currentLegendType;
     try {
-      const chartRes = await this.apiCaller.getChartData(
-        this.smonStore.appName,
-        this.smonStore.currentProfilerApi,
-        this.smonStore.buildMetricParams,
-        this.serverIp,
-        timeRange.from,
-        timeRange.to,
+      const chartRes = await this.fetchChartData(
+        timeRange,
         dayRange,
         timeInterval,
         chartType
@@ -248,6 +243,79 @@ export default class DashboardSmonHighcharts extends Vue {
     }
     this.smonStore.setToggleRenderChart(false);
     this.toggleOffSpinner();
+  }
+
+  private fetchChartData(
+    timeRange: any,
+    dayRange: string,
+    timeInterval: number,
+    chartType: string
+  ) {
+    switch (this.smonStore.currentMetricType) {
+      case METRIC_TYPE.PROFILER:
+        return this.apiCaller.getChartData(
+          this.smonStore.appName,
+          this.smonStore.currentProfilerApi,
+          this.smonStore.buildMetricParams,
+          this.serverIp,
+          timeRange.from,
+          timeRange.to,
+          dayRange,
+          timeInterval,
+          chartType
+        );
+      case METRIC_TYPE.TSERVER:
+        return this.apiCaller.getChartDataTServer(
+          this.smonStore.appName,
+          this.smonStore.buildMetricParams,
+          this.serverIp,
+          timeRange.from,
+          timeRange.to,
+          dayRange,
+          timeInterval,
+          chartType
+        );
+      case METRIC_TYPE.HSERVER:
+        return this.apiCaller.getChartDataHServer(
+          this.smonStore.appName,
+          this.smonStore.buildMetricParams,
+          this.serverIp,
+          timeRange.from,
+          timeRange.to,
+          dayRange,
+          timeInterval,
+          chartType
+        );
+      case METRIC_TYPE.ZEXECUTORS:
+        return this.apiCaller.getChartDataExecutor(
+          this.smonStore.appName,
+          this.smonStore.zexecutorName,
+          this.smonStore.buildMetricParams,
+          this.serverIp,
+          timeRange.from,
+          timeRange.to,
+          dayRange,
+          timeInterval,
+          chartType
+        );
+      case METRIC_TYPE.ZCOMWORKER:
+        const cmdArr = this.smonStore.currentProfilerApi.split(' ');
+        return this.apiCaller.getChartDataComServer(
+          this.smonStore.appName,
+          cmdArr[0],
+          cmdArr[1],
+          this.smonStore.buildMetricParams,
+          this.serverIp,
+          timeRange.from,
+          timeRange.to,
+          dayRange,
+          timeInterval,
+          chartType
+        );
+      default:
+        break;
+    }
+    return Promise.reject();
   }
 }
 </script>

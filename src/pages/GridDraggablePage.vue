@@ -1,5 +1,13 @@
 <template>
   <q-page class="q-pa-sm">
+    <div class="row q-pb-sm">
+      <div class="col">
+        <q-breadcrumbs>
+          <q-breadcrumbs-el icon="home" to="/" />
+          <q-breadcrumbs-el label="Dashboard Draggable" icon="widgets" to="/dashboard" />
+        </q-breadcrumbs>
+      </div>
+    </div>
     <grid-layout
       class="row q-col-gutter-sm items-start"
       :layout.sync="layout"

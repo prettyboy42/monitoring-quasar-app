@@ -8,7 +8,12 @@ const API_GET_ALL_TYPE_BY_APP = BASE_URL + '/get-monitor-type-support';
 const API_GET_ALL_SERVER_IP_BY_APP = BASE_URL + '/get-all-ip-by-app-name';
 const API_GET_ALL_APP_NAME = BASE_URL + '/get-all-app-name';
 const API_GET_ALL_PROFILER_BY_APP = BASE_URL + '/get-all-profiler-by-app-name';
+const API_GET_ALL_EXECUTOR_BY_APP = BASE_URL + '/get-all-executor-by-app-name';
 const API_GET_CHART_DATA = BASE_URL + '/get-chart-profiler';
+const API_GET_CHART_TSERVER = BASE_URL + '/get-chart-tserver';
+const API_GET_CHART_HSERVER = BASE_URL + '/get-chart-hserver';
+const API_GET_CHART_COMSERVER = BASE_URL + '/get-chart-comworker';
+const API_GET_CHART_ZEXECUTOR = BASE_URL + '/get-chart-executor';
 
 export default class MonitorProfilerService {
   public async fetchAllAppName() {
@@ -58,6 +63,22 @@ export default class MonitorProfilerService {
     let result: string[] = [];
     const res: AxiosResponse<ApiResult> = await axiosMain.get(
       API_GET_ALL_PROFILER_BY_APP,
+      {
+        params: {
+          appName: appName
+        }
+      }
+    );
+    if (res.status == 200 && res.data.error >= 0) {
+      result = res.data.data.result;
+    }
+    return result;
+  }
+
+  public async fetchAllExecutorByApp(appName: string) {
+    let result: string[] = [];
+    const res: AxiosResponse<ApiResult> = await axiosMain.get(
+      API_GET_ALL_EXECUTOR_BY_APP,
       {
         params: {
           appName: appName
@@ -134,6 +155,108 @@ export default class MonitorProfilerService {
         profilerApiName: apiName,
         profilerType: profilerType,
         multiProfilerType: profilerType
+      }
+    });
+  }
+
+  public getChartDataTServer(
+    appName: string,
+    profilerType: string,
+    serverIp: string,
+    startTime: number,
+    endTime: number,
+    dayRange: string,
+    timeInterval: number,
+    chartType: string
+  ): AxiosPromise<ApiResult> {
+    return axiosMain.get(API_GET_CHART_TSERVER, {
+      params: {
+        chartType: chartType,
+        timeInterval: timeInterval,
+        listDays: dayRange,
+        from: startTime,
+        to: endTime,
+        appName: appName,
+        serverIp: serverIp,
+        multiTServerType: profilerType
+      }
+    });
+  }
+
+  public getChartDataHServer(
+    appName: string,
+    profilerType: string,
+    serverIp: string,
+    startTime: number,
+    endTime: number,
+    dayRange: string,
+    timeInterval: number,
+    chartType: string
+  ): AxiosPromise<ApiResult> {
+    return axiosMain.get(API_GET_CHART_HSERVER, {
+      params: {
+        chartType: chartType,
+        timeInterval: timeInterval,
+        listDays: dayRange,
+        from: startTime,
+        to: endTime,
+        appName: appName,
+        serverIp: serverIp,
+        multiHServerType: profilerType
+      }
+    });
+  }
+
+  public getChartDataExecutor(
+    appName: string,
+    executorName: string,
+    profilerType: string,
+    serverIp: string,
+    startTime: number,
+    endTime: number,
+    dayRange: string,
+    timeInterval: number,
+    chartType: string
+  ): AxiosPromise<ApiResult> {
+    return axiosMain.get(API_GET_CHART_ZEXECUTOR, {
+      params: {
+        chartType: chartType,
+        timeInterval: timeInterval,
+        listDays: dayRange,
+        from: startTime,
+        to: endTime,
+        appName: appName,
+        serverIp: serverIp,
+        executorName: executorName,
+        multiExecutorType: profilerType
+      }
+    });
+  }
+
+  public getChartDataComServer(
+    appName: string,
+    comWorkerId: string,
+    comWorkerName: string,
+    profilerType: string,
+    serverIp: string,
+    startTime: number,
+    endTime: number,
+    dayRange: string,
+    timeInterval: number,
+    chartType: string
+  ): AxiosPromise<ApiResult> {
+    return axiosMain.get(API_GET_CHART_COMSERVER, {
+      params: {
+        chartType: chartType,
+        timeInterval: timeInterval,
+        listDays: dayRange,
+        from: startTime,
+        to: endTime,
+        appName: appName,
+        comWorkerId: comWorkerId,
+        comWorkerName: comWorkerName,
+        serverIp: serverIp,
+        multiComWorkerType: profilerType
       }
     });
   }

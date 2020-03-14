@@ -29,12 +29,8 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { storageUtils } from '../boot/services/storage-utils';
 import { Action } from 'vuex-class';
+import { ZALO_APP } from '../constants';
 
-export const ZALO_APP = {
-  appId: '952810569795803533',
-  redirectUri: 'https://monitor.zaloapp.com/auth/callback_url',
-  state: 'http://localhost:8080/login'
-};
 @Component
 export default class DialogLoginZalo extends Vue {
   public $refs!: {

@@ -2,7 +2,7 @@
   <q-list padding>
     <t-avatar-box></t-avatar-box>
     <q-separator />
-    <q-item clickable v-ripple to="/">
+    <q-item v-if="!authenticated" clickable v-ripple to="/demo-apexcharts">
       <q-item-section avatar>
         <q-icon color="primary" name="dashboard" />
       </q-item-section>
@@ -37,16 +37,6 @@
     </q-expansion-item>
 
     <q-separator />
-
-    <q-expansion-item
-      group="somegroup"
-      icon="menu_book"
-      label="Essential Links"
-      header-class="text-teal"
-      :default-opened="!authenticated"
-    >
-      <essential-link v-for="link in essentialLinks" :key="link.title" v-bind="link" />
-    </q-expansion-item>
   </q-list>
 </template>
 

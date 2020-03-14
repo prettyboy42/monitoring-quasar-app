@@ -4,13 +4,18 @@ const routes: RouteConfig[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Index.vue') }]
+    children: [
+      { name: 'Index', path: '', component: () => import('pages/Index.vue') }
+    ]
   },
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      // { path: '', component: () => import('pages/Index.vue') },
+      {
+        path: '/demo-apexcharts',
+        component: () => import('pages/DemoApexCharts.vue')
+      },
       {
         path: '/dashboard',
         component: () => import('pages/GridDraggablePage.vue')

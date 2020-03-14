@@ -8,6 +8,10 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 
-@Component
+@Component({
+  preFetch() {
+    //Do something here
+  }
+})
 export default class App extends Vue {}
 </script>

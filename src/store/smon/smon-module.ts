@@ -29,6 +29,8 @@ export default class SmonModule extends VuexModule {
   metricTypeList: string[] = [];
   metricValueList: TMetricItem[] = [];
   requireRenderChart: boolean = false;
+  zexecutorName: string = 'main';
+  zexecutorNameList: TMetricItem[] = [];
 
   //getters
   get appNames() {
@@ -84,7 +86,11 @@ export default class SmonModule extends VuexModule {
   }
 
   get isProfilerType() {
-    return this.metricType === 'Profiler';
+    return this.metricType === constants.METRIC_TYPE.PROFILER;
+  }
+
+  get isZExecutorType() {
+    return this.metricType == constants.METRIC_TYPE.ZEXECUTORS;
   }
 
   //Defines mutations
@@ -154,6 +160,20 @@ export default class SmonModule extends VuexModule {
   @Mutation
   [constants.SET_COMPLETE_INIT_STORE](val: boolean) {
     this.isInitialized = val;
+  }
+
+  @Mutation
+  [constants.ACT_UPD_ZEXECUTORS](val: string[]) {
+    this.zexecutorNameList = val.map(it => ({
+      label: it,
+      value: it
+    }));
+    this.zexecutorName = val[0];
+  }
+
+  @Mutation
+  [constants.ACT_UPD_ZEXECUTORS_NAME](val: string) {
+    this.zexecutorName = val;
   }
 
   /**
@@ -228,6 +248,15 @@ export default class SmonModule extends VuexModule {
         this[constants.UPDATE_METRIC_TYPE_LIST](metricTypes);
         this[constants.UPDATE_METRIC_VALUE]([values[0].value]);
         this[constants.UPDATE_METRIC_VALUE_LIST](values);
+        const found = metricTypes.find(
+          it => it == constants.METRIC_TYPE.ZEXECUTORS
+        );
+        if (found) {
+          const resExe = await this.apiCaller.fetchAllExecutorByApp(appName);
+          if (resExe.length > 0) {
+            this[constants.ACT_UPD_ZEXECUTORS](resExe);
+          }
+        }
       }
 
       const profilerApis = (await profilerApisPromise).map(
@@ -264,5 +293,13 @@ export default class SmonModule extends VuexModule {
     this[constants.UPDATE_METRIC_TYPE](metricType);
     this[constants.UPDATE_METRIC_VALUE]([values[0].value]);
     this[constants.UPDATE_METRIC_VALUE_LIST](values);
+    if (metricType == constants.METRIC_TYPE.ZEXECUTORS) {
+      const resExe = this.apiCaller
+        .fetchAllExecutorByApp(this.appName)
+        .then(resExe => {
+          if (resExe.length > 0) {
+          }
+        });
+    }
   }
 }

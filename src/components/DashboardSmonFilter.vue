@@ -9,9 +9,23 @@
         <div class="col-xs-12 col-sm-6 col-md-1">
           <dashboard-smon-filter-metric-type />
         </div>
-        <div :class="smonStore.isProfilerType?'col':'col q-pa-md'">
+        <div :class="smonStore.isProfilerType||smonStore.isZExecutorType?'col':'col q-pa-md'">
           <div class="q-gutter-sm items-start">
             <dashboard-smon-filter-profiler />
+            <div v-if="smonStore.isZExecutorType" class="column">
+              <label
+                class="q-field__label no-pointer-events ellipsis"
+                style="font-size:13px;"
+              >Executor</label>
+              <q-option-group
+                v-model="zexecutorName"
+                :options="smonStore.zexecutorNameList"
+                type="radio"
+                color="primary"
+                size="md"
+                inline
+              />
+            </div>
             <div class="column">
               <div
                 class="q-field__label no-pointer-events ellipsis"
@@ -48,6 +62,8 @@ import SmonObservable, { LEGEND_TYPE } from '../store/observable-smon';
 import { isNullOrEmpty } from './models';
 import { getModule } from 'vuex-module-decorators';
 import SmonModule from '../store/smon/smon-module';
+import { ACT_UPD_ZEXECUTORS_NAME } from '../store/smon/constants';
+import { Mutation } from 'vuex-class';
 
 @Component({
   components: {
@@ -64,6 +80,7 @@ import SmonModule from '../store/smon/smon-module';
 export default class DashboardSmonFilter extends Vue {
   // @Inject('storeObservable') readonly smonStore!: SmonObservable;
   private readonly smonStore = getModule(SmonModule, this.$store);
+  @Mutation(ACT_UPD_ZEXECUTORS_NAME) updateZExecutorName: any;
 
   public legendTypeOptions: object[] = [
     LEGEND_TYPE.TIME_RANGE,
@@ -71,6 +88,14 @@ export default class DashboardSmonFilter extends Vue {
   ].map(it =>
     Object.assign({}, { label: it.toString(), value: it.toString() })
   );
+
+  get zexecutorName() {
+    return this.smonStore.zexecutorName;
+  }
+
+  set zexecutorName(val: string) {
+    this.updateZExecutorName(val);
+  }
   public get showLegend() {
     return this.smonStore.enableChartLegend;
   }

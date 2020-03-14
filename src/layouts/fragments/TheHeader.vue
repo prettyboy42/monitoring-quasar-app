@@ -1,6 +1,6 @@
 <template>
   <q-header v-if="!isMobilePlatform()" elevated v-model="headerState">
-    <q-toolbar row no-wrap items-center class="glossy bg-green-9">
+    <q-toolbar row no-wrap items-center class="glossy bg-primary">
       <q-btn flat dense round aria-label="Menu" @click="toggleLeftDrawer()">
         <q-icon name="menu" />
       </q-btn>
@@ -9,10 +9,10 @@
       <q-space />
 
       <!-- <div class="q-pa-sm">Quasar v{{ $q.version }}</div> -->
-      <q-btn icon="refresh" flat stretch color="bg-green-9" @click="onClickRefreshFn">
+      <q-btn icon="refresh" flat stretch color="bg-primary" @click="onClickRefreshFn">
         <q-tooltip>Refresh now</q-tooltip>
       </q-btn>
-      <q-btn-dropdown flat stretch color="bg-green-9" :icon="refreshIcon" :label="refreshLabel">
+      <q-btn-dropdown flat stretch color="bg-primary" :icon="refreshIcon" :label="refreshLabel">
         <q-list>
           <q-item
             :key="index"
@@ -27,7 +27,14 @@
           </q-item>
         </q-list>
       </q-btn-dropdown>
-      <q-btn-dropdown flat stretch color="bg-green-9" icon="flash_on" :label="tickTimeLabel">
+      <q-btn-dropdown
+        v-if="authenticated"
+        flat
+        stretch
+        color="bg-primary"
+        icon="flash_on"
+        :label="tickTimeLabel"
+      >
         <q-list>
           <q-item
             :key="index"
@@ -42,7 +49,14 @@
           </q-item>
         </q-list>
       </q-btn-dropdown>
-      <q-btn-dropdown flat stretch color="bg-green-9" icon="access_time" :label="timeRangeLabel">
+      <q-btn-dropdown
+        v-if="authenticated"
+        flat
+        stretch
+        color="bg-primary"
+        icon="access_time"
+        :label="timeRangeLabel"
+      >
         <q-list>
           <q-item
             :key="index"
@@ -104,7 +118,7 @@
     </q-toolbar>
   </q-header>
   <q-header v-else elevated v-model="headerState">
-    <q-toolbar row no-wrap items-center class="glossy bg-green-9">
+    <q-toolbar row no-wrap items-center class="glossy bg-primary">
       <q-btn flat dense round aria-label="Menu" @click="toggleLeftDrawer()">
         <q-icon name="menu" />
       </q-btn>

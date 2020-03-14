@@ -282,5 +282,18 @@ export default class ApexLine extends Vue {
       this.setDataLineChart(newVal);
     }
   }
+
+  @Watch('$store.state.layout.forceRefresh')
+  onChangedForceRefresh(val: boolean) {
+    this.series[0].data.splice(0, 1);
+    this.series[0].data.push(this.getRandomArbitrary());
+    this.series[1].data.splice(0, 1);
+    this.series[1].data.push(this.getRandomArbitrary());
+    this.series[2].data.splice(0, 1);
+    this.series[2].data.push(this.getRandomArbitrary());
+    this.updateSeriesLine();
+
+    this.$store.dispatch('layout/setForceRefresh', false);
+  }
 }
 </script>

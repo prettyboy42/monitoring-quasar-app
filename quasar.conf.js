@@ -88,7 +88,9 @@ module.exports = configure(function(ctx) {
         'QTooltip',
         'QInnerLoading',
         'QSpinnerIos',
-        'QDialog'
+        'QDialog',
+        'QBreadcrumbs',
+        'QBreadcrumbsEl'
       ],
 
       directives: ['Ripple', 'ClosePopup'],
@@ -149,6 +151,7 @@ module.exports = configure(function(ctx) {
             loader: 'eslint-loader',
             exclude: /node_modules/,
             options: {
+              cache: true,
               formatter: require('eslint').CLIEngine.getFormatter('stylish')
             }
           });
