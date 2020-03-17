@@ -1,12 +1,13 @@
 <template>
   <q-select
     v-if="smonStore.isProfilerType"
+    dense
+    options-dense
     color="orange"
     v-model="currentApi"
     :options="smonStore.profilerApis"
     @input="handleChangedProfilerFn"
     size="md"
-    label="Profiler name"
   />
 </template>
 

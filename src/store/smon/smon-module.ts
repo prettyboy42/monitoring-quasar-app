@@ -18,7 +18,7 @@ export default class SmonModule extends VuexModule {
   isInitialized: boolean = false;
   appName: string = '';
   apiName: string = '';
-  metricType: string = '';
+  metricType: TMetricItem = { label: '', value: '' };
   metricValues: string[] = [];
   chartLegendType: string = constants.LEGEND_TYPE.TIME_RANGE;
   enableChartSync: boolean = true;
@@ -26,7 +26,7 @@ export default class SmonModule extends VuexModule {
   charts: ChartItem[] = [];
   appNameList: string[] = [];
   apiNameList: string[] = [];
-  metricTypeList: string[] = [];
+  metricTypeList: TMetricItem[] = [];
   metricValueList: TMetricItem[] = [];
   requireRenderChart: boolean = false;
   zexecutorName: string = 'main';
@@ -86,11 +86,11 @@ export default class SmonModule extends VuexModule {
   }
 
   get isProfilerType() {
-    return this.metricType === constants.METRIC_TYPE.PROFILER;
+    return this.metricType.value === constants.METRIC_TYPE.PROFILER;
   }
 
   get isZExecutorType() {
-    return this.metricType == constants.METRIC_TYPE.ZEXECUTORS;
+    return this.metricType.value == constants.METRIC_TYPE.ZEXECUTORS;
   }
 
   //Defines mutations
@@ -99,11 +99,11 @@ export default class SmonModule extends VuexModule {
     this.appName = val;
   }
   @Mutation
-  [constants.UPDATE_METRIC_TYPE](val: string) {
+  [constants.UPDATE_METRIC_TYPE](val: TMetricItem) {
     this.metricType = val;
   }
   @Mutation
-  [constants.UPDATE_METRIC_TYPE_LIST](val: string[]) {
+  [constants.UPDATE_METRIC_TYPE_LIST](val: TMetricItem[]) {
     this.metricTypeList = val;
   }
 
@@ -186,7 +186,7 @@ export default class SmonModule extends VuexModule {
   }
 
   @Action({ commit: constants.UPDATE_METRIC_TYPE })
-  public setMetricType(newVal: string) {
+  public setMetricType(newVal: TMetricItem) {
     return newVal;
   }
 
@@ -244,8 +244,13 @@ export default class SmonModule extends VuexModule {
       if (metricTypes.length > 0) {
         const metricType = metricTypes[0];
         const values = this.apiCaller.fetchMetricByType(metricType);
-        this[constants.UPDATE_METRIC_TYPE](metricType);
-        this[constants.UPDATE_METRIC_TYPE_LIST](metricTypes);
+
+        const metricTypesOpt = metricTypes.map(it => ({
+          label: it,
+          value: it
+        }));
+        this[constants.UPDATE_METRIC_TYPE](metricTypesOpt[0]);
+        this[constants.UPDATE_METRIC_TYPE_LIST](metricTypesOpt);
         this[constants.UPDATE_METRIC_VALUE]([values[0].value]);
         this[constants.UPDATE_METRIC_VALUE_LIST](values);
         const found = metricTypes.find(
@@ -288,12 +293,12 @@ export default class SmonModule extends VuexModule {
   }
 
   @Action
-  public fetchMetricByType(metricType: string) {
-    const values = this.apiCaller.fetchMetricByType(metricType);
+  public fetchMetricByType(metricType: TMetricItem) {
+    const values = this.apiCaller.fetchMetricByType(metricType.value);
     this[constants.UPDATE_METRIC_TYPE](metricType);
     this[constants.UPDATE_METRIC_VALUE]([values[0].value]);
     this[constants.UPDATE_METRIC_VALUE_LIST](values);
-    if (metricType == constants.METRIC_TYPE.ZEXECUTORS) {
+    if (metricType.value == constants.METRIC_TYPE.ZEXECUTORS) {
       const resExe = this.apiCaller
         .fetchAllExecutorByApp(this.appName)
         .then(resExe => {

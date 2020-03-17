@@ -251,7 +251,7 @@ export default class DashboardSmonHighcharts extends Vue {
     timeInterval: number,
     chartType: string
   ) {
-    switch (this.smonStore.currentMetricType) {
+    switch (this.smonStore.currentMetricType.value) {
       case METRIC_TYPE.PROFILER:
         return this.apiCaller.getChartData(
           this.smonStore.appName,

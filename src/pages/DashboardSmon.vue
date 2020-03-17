@@ -10,7 +10,7 @@
     </div>
     <div v-show="$q.platform.is.desktop === true" class="row q-pb-md">
       <div class="col-12">
-        <dashboard-smon-filter />
+        <dashboard-smon-filter2 />
       </div>
     </div>
     <div
@@ -40,7 +40,7 @@ import SmonModule from '../store/smon/smon-module';
 
 @Component({
   components: {
-    DashboardSmonFilter: () => import('components/DashboardSmonFilter.vue'),
+    DashboardSmonFilter2: () => import('components/DashboardSmonFilter2.vue'),
     DashboardSmonChart: () => import('../components/DashboardSmonChart.vue')
   }
 })

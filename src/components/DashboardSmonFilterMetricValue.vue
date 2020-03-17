@@ -1,13 +1,27 @@
 <template>
-  <q-option-group
-    v-model="metricValue"
-    :options="smonStore.metricValueList"
-    :type="smonStore.metricGroup"
-    color="primary"
-    size="md"
-    inline
-    dense
-  />
+  <div class="q-pa-sm">
+    <q-btn-dropdown
+      dense
+      flat
+      no-caps
+      color="primary"
+      menu-anchor="bottom left"
+      menu-self="top left"
+      label="Metrics"
+      size="md"
+    >
+      <div class="row q-pa-sm">
+        <q-option-group
+          v-model="metricValue"
+          :options="smonStore.metricValueList"
+          :type="smonStore.metricGroup"
+          color="primary"
+          size="md"
+          dense
+        />
+      </div>
+    </q-btn-dropdown>
+  </div>
 </template>
 
 <script lang="ts">

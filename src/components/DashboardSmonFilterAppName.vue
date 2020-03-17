@@ -1,6 +1,8 @@
 <template>
   <q-select
-    tabindex="0"
+    dense
+    options-dense
+    outlined
     use-input
     hide-selected
     fill-input
@@ -12,7 +14,6 @@
     @filter-abort="abortFilterFn"
     @input="handleChangedAppNameFn"
     size="md"
-    label="App name"
   />
 </template>
 
