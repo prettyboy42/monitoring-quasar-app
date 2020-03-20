@@ -14,7 +14,9 @@
     @filter-abort="abortFilterFn"
     @input="handleChangedAppNameFn"
     size="md"
-  />
+  >
+    <q-tooltip>Choose app to view</q-tooltip>
+  </q-select>
 </template>
 
 <script lang="ts">

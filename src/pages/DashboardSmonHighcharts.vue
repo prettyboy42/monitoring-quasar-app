@@ -1,16 +1,8 @@
 <template>
   <q-page :class="$q.platform.is.desktop===true?'q-pa-md':'q-pa-xs'">
-    <div class="row q-pb-sm">
-      <div class="col">
-        <q-breadcrumbs>
-          <q-breadcrumbs-el icon="home" to="/" />
-          <q-breadcrumbs-el label="Smon Highcharts" icon="widgets" to="/dashboard-smon-highcharts" />
-        </q-breadcrumbs>
-      </div>
-    </div>
     <div v-show="$q.platform.is.desktop === true" class="row q-pb-md">
       <div class="col-12">
-        <dashboard-smon-filter />
+        <dashboard-smon-filter2 />
       </div>
     </div>
     <div
@@ -42,7 +34,7 @@ import { LEGEND_TYPE } from '../store/smon/constants';
 
 @Component({
   components: {
-    DashboardSmonFilter: () => import('components/DashboardSmonFilter.vue'),
+    DashboardSmonFilter2: () => import('components/DashboardSmonFilter2.vue'),
     DashboardSmonHighcharts: () =>
       import('components/DashboardSmonHighcharts.vue')
   }

@@ -14,6 +14,10 @@ export const UPDATE_CHARTS = 'updateCharts';
 export const SET_COMPLETE_INIT_STORE = 'setCompleteInitStore';
 export const ACT_UPD_ZEXECUTORS = 'updateZExecutors';
 export const ACT_UPD_ZEXECUTORS_NAME = 'updateZExecutorsName';
+export const ACT_UPD_POOL_NAME = 'updatePoolName';
+export const ACT_UPD_POOL_NAME_LIST = 'updatePoolNameList';
+export const ACT_UPD_POOL_IP = 'updatePoolIP';
+export const ACT_UPD_POOL_IP_LIST = 'updatePoolIPList';
 
 export enum LEGEND_TYPE {
   TIME_RANGE = 'time-range',
@@ -26,7 +30,8 @@ export enum METRIC_TYPE {
   HSERVER = 'HServer',
   ZCOMWORKER = 'ZComWorker',
   ZEXECUTORS = 'ZExecutors',
-  ZWATCHER = 'ZWatcher'
+  ZWATCHER = 'ZWatcher',
+  TCLIENTPOOL = 'TClientPool'
 }
 export const CONST_METRIC_TYPE = [
   METRIC_TYPE.PROFILER,
@@ -98,6 +103,17 @@ export const CONST_METRICS_BY_TYPE = [
       { display: 'n_largest', rawValue: 'nlargest_thread' },
       { display: 'n_uncomplete', rawValue: 'not_completed' },
       { display: 'n_reject', rawValue: 'rejected_task_count' }
+    ]
+  },
+  {
+    name: METRIC_TYPE.TCLIENTPOOL,
+    value: [
+      { display: 'nalloc', rawValue: 'nalloc' },
+      { display: 'nborrow_rate', rawValue: 'nborrow_rate' },
+      { display: 'nidle', rawValue: 'nidle' },
+      { display: 'ninvalidate_rate', rawValue: 'ninvalidate_rate' },
+      { display: 'nreturn_rate', rawValue: 'nreturn_rate' },
+      { display: 'nunreturn_rate', rawValue: 'nunreturn_rate' }
     ]
   }
 ];

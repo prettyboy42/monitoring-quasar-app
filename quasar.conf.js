@@ -90,7 +90,8 @@ module.exports = configure(function(ctx) {
         'QSpinnerIos',
         'QDialog',
         'QBreadcrumbs',
-        'QBreadcrumbsEl'
+        'QBreadcrumbsEl',
+        'QRadio'
       ],
 
       directives: ['Ripple', 'ClosePopup'],

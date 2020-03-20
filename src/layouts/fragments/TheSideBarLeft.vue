@@ -6,6 +6,10 @@
     :width="300"
     :breakpoint="700"
     bordered
+    :mini="miniState"
+    @mouseenter="miniState = false"
+    @mouseleave="miniState = true"
+    mini-to-overlay
   >
     <q-scroll-area class="fit">
       <t-menu :essentialLinks="essentialLinks"></t-menu>
@@ -33,6 +37,7 @@ import TMenu from '../../components/TMenu.vue';
 export default class TheSideBarLeft extends Vue {
   store = getModule(LayoutModule, this.$store);
   @Prop({ default: [] }) readonly essentialLinks!: object;
+  miniState = true;
 
   get leftDrawerOpen() {
     return this.store.leftDrawerOpen;

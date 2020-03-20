@@ -9,11 +9,16 @@ const API_GET_ALL_SERVER_IP_BY_APP = BASE_URL + '/get-all-ip-by-app-name';
 const API_GET_ALL_APP_NAME = BASE_URL + '/get-all-app-name';
 const API_GET_ALL_PROFILER_BY_APP = BASE_URL + '/get-all-profiler-by-app-name';
 const API_GET_ALL_EXECUTOR_BY_APP = BASE_URL + '/get-all-executor-by-app-name';
+const API_GET_ALL_CLIENT_POOL_BY_APP =
+  BASE_URL + '/get-all-pool-name-by-app-name';
+const API_GET_ALL_CLIENT_POOL_IP_BY_NAME =
+  BASE_URL + '/get-all-pool-ip-by-app-name-pool-name';
 const API_GET_CHART_DATA = BASE_URL + '/get-chart-profiler';
 const API_GET_CHART_TSERVER = BASE_URL + '/get-chart-tserver';
 const API_GET_CHART_HSERVER = BASE_URL + '/get-chart-hserver';
 const API_GET_CHART_COMSERVER = BASE_URL + '/get-chart-comworker';
 const API_GET_CHART_ZEXECUTOR = BASE_URL + '/get-chart-executor';
+const API_GET_CHART_TCLIENTPOOL = BASE_URL + '/get-chart-tclientpool';
 
 export default class MonitorProfilerService {
   public async fetchAllAppName() {
@@ -82,6 +87,39 @@ export default class MonitorProfilerService {
       {
         params: {
           appName: appName
+        }
+      }
+    );
+    if (res.status == 200 && res.data.error >= 0) {
+      result = res.data.data.result;
+    }
+    return result;
+  }
+
+  public async fetchAllClientPoolByApp(appName: string) {
+    let result: string[] = [];
+    const res: AxiosResponse<ApiResult> = await axiosMain.get(
+      API_GET_ALL_CLIENT_POOL_BY_APP,
+      {
+        params: {
+          appName: appName
+        }
+      }
+    );
+    if (res.status == 200 && res.data.error >= 0) {
+      result = res.data.data.result;
+    }
+    return result;
+  }
+
+  public async fetchAllClientIPByPool(appName: string, poolName: string) {
+    let result: string[] = [];
+    const res: AxiosResponse<ApiResult> = await axiosMain.get(
+      API_GET_ALL_CLIENT_POOL_IP_BY_NAME,
+      {
+        params: {
+          appName: appName,
+          poolName: poolName
         }
       }
     );
@@ -257,6 +295,35 @@ export default class MonitorProfilerService {
         comWorkerName: comWorkerName,
         serverIp: serverIp,
         multiComWorkerType: profilerType
+      }
+    });
+  }
+
+  public getChartDataTClientPool(
+    appName: string,
+    poolName: string,
+    poolIp: string,
+    multiPoolType: string,
+    serverIp: string,
+    startTime: number,
+    endTime: number,
+    dayRange: string,
+    timeInterval: number,
+    chartType: string
+  ): AxiosPromise<ApiResult> {
+    return axiosMain.get(API_GET_CHART_TCLIENTPOOL, {
+      params: {
+        chartType: chartType,
+        timeInterval: timeInterval,
+        listDays: dayRange,
+        from: startTime,
+        to: endTime,
+        appName: appName,
+        poolName: poolName,
+        poolIp: poolIp,
+        serverIp: serverIp,
+        poolType: multiPoolType,
+        multiPoolType: multiPoolType
       }
     });
   }

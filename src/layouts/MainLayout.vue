@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lff">
+  <q-layout view="hHh Lpr lff">
     <the-header :headline="headline" />
     <the-side-bar-left :essentialLinks="essentialLinks" />
 

@@ -5,14 +5,26 @@
         <q-icon name="menu" />
       </q-btn>
 
-      <q-toolbar-title>{{ headline }}</q-toolbar-title>
+      <q-btn class="quasar-logo" flat no-caps no-wrap stretch to="/">
+        <q-avatar icon="img:https://cdn.quasar.dev/logo/svg/quasar-logo.svg"></q-avatar>
+        <q-toolbar-title shrink>{{ headline }}</q-toolbar-title>
+      </q-btn>
+
       <q-space />
 
       <!-- <div class="q-pa-sm">Quasar v{{ $q.version }}</div> -->
       <q-btn icon="refresh" flat stretch color="bg-primary" @click="onClickRefreshFn">
         <q-tooltip>Refresh now</q-tooltip>
       </q-btn>
-      <q-btn-dropdown flat stretch color="bg-primary" :icon="refreshIcon" :label="refreshLabel">
+      <q-separator dark vertical />
+      <q-btn-dropdown
+        flat
+        stretch
+        no-caps
+        color="bg-primary"
+        :icon="refreshIcon"
+        :label="refreshLabel"
+      >
         <q-list>
           <q-item
             :key="index"
@@ -31,6 +43,7 @@
         v-if="authenticated"
         flat
         stretch
+        no-caps
         color="bg-primary"
         icon="flash_on"
         :label="tickTimeLabel"
@@ -53,6 +66,7 @@
         v-if="authenticated"
         flat
         stretch
+        no-caps
         color="bg-primary"
         icon="access_time"
         :label="timeRangeLabel"
@@ -77,14 +91,12 @@
           flat
           @click="$q.fullscreen.toggle()"
           :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
-          :label="$q.fullscreen.isActive ? 'Exit Fullscreen' : 'Fullscreen'"
-        />
-        <q-btn
-          flat
-          @click="$q.dark.toggle()"
-          :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"
-          :label="$q.dark.isActive ? 'Dark' : 'Light'"
-        />
+        >
+          <q-tooltip>{{ $q.fullscreen.isActive ? 'Exit zen mode' : 'Enter zen mode' }}</q-tooltip>
+        </q-btn>
+        <q-btn flat @click="$q.dark.toggle()" :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'">
+          <q-tooltip>{{$q.dark.isActive ? 'Click to switch off dark' : 'Click to switch on Dark'}}</q-tooltip>
+        </q-btn>
       </q-btn-group>
       <q-separator dark vertical />
       <q-btn-dropdown flat stretch no-caps label="Account" icon="mdi-account">
@@ -157,7 +169,7 @@ export default class TheHeader extends Vue {
   private readonly auth!: () => AuthService;
 
   @Prop({ default: 'No headline' }) readonly headline!: string;
-  private readonly defaultRefreshLabel: string = 'Auto refresh';
+  private readonly defaultRefreshLabel: string = 'Off';
   private readonly defaultRefreshIcon: string = 'autorenew';
   public readonly refreshMenuList = AUTO_REFRESH_INTERVAL;
   public readonly tickTimeMenuList = TICK_TIME_INTERVAL;
@@ -176,7 +188,7 @@ export default class TheHeader extends Vue {
     const found = TIME_RANGE_INTERVAL.find(
       it => it.value == this.store.timeRangeInterval
     );
-    return found ? this.formatDisplayTickTime(found.label) : '';
+    return found ? found.label : '';
   }
 
   get headerState() {
@@ -216,8 +228,7 @@ export default class TheHeader extends Vue {
       //Trigger auto-refresh mode
       this.store.setRefreshTimeInterval(found.value);
       //Update label
-      this.refreshLabel =
-        found.value == 0 ? this.defaultRefreshLabel : found.label;
+      this.refreshLabel = found.label;
       this.refreshIcon = found.value == 0 ? this.defaultRefreshIcon : 'pause';
     }
   }
@@ -246,7 +257,15 @@ export default class TheHeader extends Vue {
   }
 
   private formatDisplayTickTime(val: string) {
-    return `Interval: ${val}`;
+    return `Interval ${val}`;
   }
 }
 </script>
+<style lang="sass">
+.quasar-logo
+  img
+    transform: rotate(0deg)
+    transition: transform .8s ease-in-out
+  &:hover img
+    transform: rotate(-360deg)
+</style>

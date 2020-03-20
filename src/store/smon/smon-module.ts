@@ -1,7 +1,6 @@
 import { Notify } from 'quasar';
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators';
 import ProfilerService from '../../boot/services/monitor-profiler.service';
-import SmonObservable from '../observable-smon';
 import * as constants from './constants';
 import { ChartItem, TMetricItem } from './types';
 
@@ -13,7 +12,6 @@ import { ChartItem, TMetricItem } from './types';
 })
 export default class SmonModule extends VuexModule {
   public static readonly MODULE_NAME = 'smon';
-  private readonly storeObs = new SmonObservable();
   private readonly apiCaller = new ProfilerService();
   isInitialized: boolean = false;
   appName: string = '';
@@ -29,8 +27,12 @@ export default class SmonModule extends VuexModule {
   metricTypeList: TMetricItem[] = [];
   metricValueList: TMetricItem[] = [];
   requireRenderChart: boolean = false;
-  zexecutorName: string = 'main';
+  zexecutorName: string = '';
   zexecutorNameList: TMetricItem[] = [];
+  poolName: TMetricItem = { label: '', value: '' };
+  poolNameList: TMetricItem[] = [];
+  poolIp: TMetricItem = { label: '', value: '' };
+  poolIpList: TMetricItem[] = [];
 
   //getters
   get appNames() {
@@ -91,6 +93,18 @@ export default class SmonModule extends VuexModule {
 
   get isZExecutorType() {
     return this.metricType.value == constants.METRIC_TYPE.ZEXECUTORS;
+  }
+
+  get isTClientPoolType() {
+    return this.metricType.value == constants.METRIC_TYPE.TCLIENTPOOL;
+  }
+
+  get isTimeRangeLegend() {
+    return this.chartLegendType === constants.LEGEND_TYPE.TIME_RANGE;
+  }
+
+  get isByDayLegend() {
+    return this.chartLegendType === constants.LEGEND_TYPE.BY_DAY;
   }
 
   //Defines mutations
@@ -174,6 +188,34 @@ export default class SmonModule extends VuexModule {
   @Mutation
   [constants.ACT_UPD_ZEXECUTORS_NAME](val: string) {
     this.zexecutorName = val;
+  }
+
+  @Mutation
+  [constants.ACT_UPD_POOL_IP_LIST](val: string[]) {
+    this.poolIpList = val.map(it => ({
+      label: it,
+      value: it
+    }));
+    this.poolIp = this.poolIpList[0];
+  }
+
+  @Mutation
+  [constants.ACT_UPD_POOL_IP](val: TMetricItem) {
+    this.poolIp = val;
+  }
+
+  @Mutation
+  [constants.ACT_UPD_POOL_NAME_LIST](val: string[]) {
+    this.poolNameList = val.map(it => ({
+      label: it,
+      value: it
+    }));
+    this.poolName = this.poolNameList[0];
+  }
+
+  @Mutation
+  [constants.ACT_UPD_POOL_NAME](val: TMetricItem) {
+    this.poolName = val;
   }
 
   /**
@@ -262,6 +304,24 @@ export default class SmonModule extends VuexModule {
             this[constants.ACT_UPD_ZEXECUTORS](resExe);
           }
         }
+        const foundPool = metricTypes.find(
+          it => it == constants.METRIC_TYPE.TCLIENTPOOL
+        );
+        if (foundPool) {
+          const resPoolList = await this.apiCaller.fetchAllClientPoolByApp(
+            this.appName
+          );
+          if (resPoolList.length > 0) {
+            this[constants.ACT_UPD_POOL_NAME_LIST](resPoolList);
+            const resPoolIpList = await this.apiCaller.fetchAllClientIPByPool(
+              this.appName,
+              this.poolName.value
+            );
+            if (resPoolIpList.length > 0) {
+              this[constants.ACT_UPD_POOL_IP_LIST](resPoolIpList);
+            }
+          }
+        }
       }
 
       const profilerApis = (await profilerApisPromise).map(
@@ -293,7 +353,7 @@ export default class SmonModule extends VuexModule {
   }
 
   @Action
-  public fetchMetricByType(metricType: TMetricItem) {
+  public async fetchMetricByType(metricType: TMetricItem) {
     const values = this.apiCaller.fetchMetricByType(metricType.value);
     this[constants.UPDATE_METRIC_TYPE](metricType);
     this[constants.UPDATE_METRIC_VALUE]([values[0].value]);
@@ -303,8 +363,23 @@ export default class SmonModule extends VuexModule {
         .fetchAllExecutorByApp(this.appName)
         .then(resExe => {
           if (resExe.length > 0) {
+            this[constants.ACT_UPD_ZEXECUTORS](resExe);
           }
         });
+    } else if (metricType.value == constants.METRIC_TYPE.TCLIENTPOOL) {
+      const resPoolList = await this.apiCaller.fetchAllClientPoolByApp(
+        this.appName
+      );
+      if (resPoolList.length > 0) {
+        this[constants.ACT_UPD_POOL_NAME_LIST](resPoolList);
+        const resPoolIpList = await this.apiCaller.fetchAllClientIPByPool(
+          this.appName,
+          this.poolName.value
+        );
+        if (resPoolIpList.length > 0) {
+          this[constants.ACT_UPD_POOL_IP_LIST](resPoolIpList);
+        }
+      }
     }
   }
 }

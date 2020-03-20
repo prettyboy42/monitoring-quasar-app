@@ -8,7 +8,9 @@
     :options="smonStore.metricTypeList"
     @input="handleChangedMetricFn"
     size="md"
-  />
+  >
+    <q-tooltip>Metric type</q-tooltip>
+  </q-select>
   <!-- <q-option-group
     v-model="metricType"
     :options="smonStore.metricTypeList"

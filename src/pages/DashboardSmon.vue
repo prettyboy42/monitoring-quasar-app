@@ -1,13 +1,5 @@
 <template>
   <q-page :class="$q.platform.is.desktop===true?'q-pa-md':'q-pa-xs'">
-    <div class="row q-pb-sm">
-      <div class="col">
-        <q-breadcrumbs>
-          <q-breadcrumbs-el icon="home" to="/" />
-          <q-breadcrumbs-el label="Smon Apexcharts" icon="widgets" to="/dashboard-smon" />
-        </q-breadcrumbs>
-      </div>
-    </div>
     <div v-show="$q.platform.is.desktop === true" class="row q-pb-md">
       <div class="col-12">
         <dashboard-smon-filter2 />

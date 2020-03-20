@@ -52,7 +52,7 @@ export default class DashboardSmonChart extends Vue {
   public visible: boolean = true;
   public showSimulatedReturnData: boolean = false;
   public chartSeries: ChartSeries[] = [];
-  private readonly parentHeightOffset: number = 15;
+  private readonly parentHeightOffset = 15;
   private readonly defaultHeightChart = 300;
   public readonly colors: string[] = [
     'linear-gradient( 135deg, #ABDCFF 10%, #0396FF 100%)',
@@ -206,13 +206,13 @@ export default class DashboardSmonChart extends Vue {
   }
 
   get maxHeightChart() {
-    const baseH = this.parentHeightOffset * 10 + this.defaultHeightChart;
+    const baseH = this.parentHeightOffset + this.defaultHeightChart;
     return this.smonStore.chartList.length > 1 ? baseH + 180 : baseH;
   }
 
   get chartHeight() {
     return this.smonStore.chartList.length > 1
-      ? 'auto'
+      ? this.minHeightChart
       : this.maxHeightChart - this.parentHeightOffset;
   }
 
@@ -424,6 +424,19 @@ export default class DashboardSmonChart extends Vue {
           this.smonStore.appName,
           cmdArr[0],
           cmdArr[1],
+          this.smonStore.buildMetricParams,
+          this.serverIp,
+          timeRange.from,
+          timeRange.to,
+          dayRange,
+          timeInterval,
+          chartType
+        );
+      case METRIC_TYPE.TCLIENTPOOL:
+        return this.apiCaller.getChartDataTClientPool(
+          this.smonStore.appName,
+          this.smonStore.poolName.value,
+          this.smonStore.poolIp.value,
           this.smonStore.buildMetricParams,
           this.serverIp,
           timeRange.from,

@@ -1,7 +1,7 @@
 <template>
   <q-list padding>
-    <t-avatar-box></t-avatar-box>
-    <q-separator />
+    <!-- <t-avatar-box></t-avatar-box>
+    <q-separator />-->
     <q-item v-if="!authenticated" clickable v-ripple to="/demo-apexcharts">
       <q-item-section avatar>
         <q-icon color="primary" name="dashboard" />

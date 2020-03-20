@@ -1,5 +1,37 @@
 <template>
-  <div class="q-pa-sm">
+  <q-select
+    dense
+    options-dense
+    outlined
+    multiple
+    emit-value
+    map-options
+    v-model="metricValue"
+    :options="smonStore.metricValueList"
+  >
+    <template v-slot:option="scope">
+      <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+        <q-item-section>
+          <q-item-label v-html="scope.opt.label"></q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-toggle
+            v-if="smonStore.isTimeRangeLegend"
+            v-model="metricValue"
+            :val="scope.opt.value"
+          />
+          <q-radio v-if="smonStore.isByDayLegend" v-model="metricValue" :val="scope.opt.value" />
+        </q-item-section>
+      </q-item>
+    </template>
+    <template v-slot:no-option>
+      <q-item>
+        <q-item-section class="text-italic text-grey">No options slot</q-item-section>
+      </q-item>
+    </template>
+    <q-tooltip>Metric value</q-tooltip>
+  </q-select>
+  <!-- <div class="q-pa-sm">
     <q-btn-dropdown
       dense
       flat
@@ -21,7 +53,7 @@
         />
       </div>
     </q-btn-dropdown>
-  </div>
+  </div>-->
 </template>
 
 <script lang="ts">

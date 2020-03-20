@@ -312,6 +312,19 @@ export default class DashboardSmonHighcharts extends Vue {
           timeInterval,
           chartType
         );
+      case METRIC_TYPE.TCLIENTPOOL:
+        return this.apiCaller.getChartDataTClientPool(
+          this.smonStore.appName,
+          this.smonStore.poolName.value,
+          this.smonStore.poolIp.value,
+          this.smonStore.buildMetricParams,
+          this.serverIp,
+          timeRange.from,
+          timeRange.to,
+          dayRange,
+          timeInterval,
+          chartType
+        );
       default:
         break;
     }

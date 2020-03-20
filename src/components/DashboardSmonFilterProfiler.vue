@@ -1,8 +1,8 @@
 <template>
   <q-select
-    v-if="smonStore.isProfilerType"
     dense
     options-dense
+    outlined
     color="orange"
     v-model="currentApi"
     :options="smonStore.profilerApis"
