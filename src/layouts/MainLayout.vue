@@ -37,12 +37,6 @@ export default class MainLayout extends Vue {
   footerline = 'Pacific Ocean, copyright © 2019. All rights reserved.';
   essentialLinks = [
     {
-      title: 'ZaloGit',
-      caption: 'zalo social team',
-      icon: 'build',
-      link: 'https://zalogit2.zing.vn/zalo-social'
-    },
-    {
       title: 'Docs',
       caption: 'quasar.dev',
       icon: 'school',
